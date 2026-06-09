@@ -1,18 +1,12 @@
 import { requireUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { toTradeRow } from "@/lib/view";
-import { relativeLabel } from "@/lib/view";
+import { toTradeRow, relativeLabel } from "@/lib/view";
 import { JournalView } from "./journal-view";
 
 export const dynamic = "force-dynamic";
 
-export default async function JournalPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ log?: string }>;
-}) {
+export default async function JournalPage() {
   const user = await requireUser();
-  const { log } = await searchParams;
 
   const [trades, missed, backtests] = await Promise.all([
     prisma.trade.findMany({
@@ -45,7 +39,6 @@ export default async function JournalPage({
         net: b.net,
         period: b.period,
       }))}
-      initialLog={log === "missed" || log === "backtest" || log === "trade" ? log : undefined}
     />
   );
 }
