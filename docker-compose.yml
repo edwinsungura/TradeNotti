@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: tradenotti-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tradenotti
+      POSTGRES_PASSWORD: tradenotti
+      POSTGRES_DB: tradenotti
+    ports:
+      - "5432:5432"
+    volumes:
+      - tradenotti_pgdata:/var/lib/postgresql/data
+
+volumes:
+  tradenotti_pgdata:
