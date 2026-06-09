@@ -2,122 +2,96 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Icon, Button, Input, Textarea, formatMoney } from "@/components/ui";
+import { Icon, Button, Input, Textarea } from "@/components/ui";
 import { saveNotebookEntry } from "@/lib/actions/notebook";
 
-export type CalDayVM = {
+export type NbCell = {
   day: number;
-  pnl: number;
-  trades: number;
-  today: boolean;
-  future: boolean;
-  hasNote: boolean;
+  other?: boolean;
+  today?: boolean;
+  entries?: { id: string; title: string }[];
 };
 
 type Selected = { iso: string; label: string; title: string; text: string };
-type Recent = { id: string; iso: string; label: string; title: string };
 
 export function NotebookView({
   monthLabel,
-  days,
-  startDow,
+  monthIso,
+  cells,
   selected,
-  recent,
 }: {
   monthLabel: string;
-  days: CalDayVM[];
-  startDow: number;
+  monthIso: string;
+  cells: NbCell[];
   selected: Selected | null;
-  recent: Recent[];
 }) {
   const router = useRouter();
-  const cells: (CalDayVM | null)[] = [];
-  for (let i = 0; i < startDow; i++) cells.push(null);
-  cells.push(...days);
-  while (cells.length % 7) cells.push(null);
-  const max = Math.max(1, ...days.map((d) => Math.abs(d.pnl)));
 
-  function openDay(d: CalDayVM) {
-    const month = monthLabel; // not used directly; build ISO from current month via router query
-    void month;
-    const now = new Date();
-    const iso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`;
-    router.push(`/notebook?date=${iso}`);
-  }
+  const openDay = (day: number) => router.push(`/notebook?date=${monthIso}-${String(day).padStart(2, "0")}`);
+  const todayDay = cells.find((c) => c.today)?.day;
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: selected ? "1.4fr 1fr" : "1fr", gap: 20 }}>
-      <div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-          <h3 className="oa-card-title">{monthLabel}</h3>
+    <div className="oa-page" style={{ maxWidth: "none" }}>
+      <div className="oa-page-header">
+        <div>
+          <h1 className="oa-page-title">Notebook</h1>
+          <p className="t-body-sm" style={{ color: "var(--fg-2)", marginTop: 8, maxWidth: 560 }}>
+            A blank master calendar. Click the <b>+</b> on any day to write — start from a template or a blank page,
+            save your own templates, and customize every part of the page.
+          </p>
         </div>
-        <div className="oa-cal">
-          <div className="oa-cal-dow">
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-              <div key={d}>{d}</div>
-            ))}
-          </div>
-          <div className="oa-cal-grid">
-            {cells.map((c, i) => {
-              if (!c) return <div key={i} className="oa-cal-cell oa-cal-empty" />;
-              const intensity = Math.min(1, Math.abs(c.pnl) / max);
-              const isProfit = c.pnl > 0;
-              const isLoss = c.pnl < 0;
-              const bg = isProfit
-                ? `rgba(31, 157, 107, ${0.1 + intensity * 0.6})`
-                : isLoss
-                  ? `rgba(214, 69, 69, ${0.1 + intensity * 0.6})`
-                  : "transparent";
-              const border = c.today ? "1.5px solid var(--gold)" : "1px solid var(--line-2)";
-              return (
-                <div
-                  key={i}
-                  className={`oa-cal-cell ${c.future ? "future" : ""} ${c.today ? "today" : ""}`}
-                  style={{ background: bg, border, cursor: "pointer", position: "relative" }}
-                  onClick={() => openDay(c)}
-                >
-                  <div className="oa-cal-day">{c.day}</div>
-                  {c.trades > 0 ? (
-                    <>
-                      <div className={`oa-cal-pnl ${isProfit ? "profit" : isLoss ? "loss" : ""}`}>
-                        {formatMoney(c.pnl, { decimals: 0 })}
-                      </div>
-                      <div className="oa-cal-trades">
-                        {c.trades} {c.trades === 1 ? "trade" : "trades"}
-                      </div>
-                    </>
-                  ) : null}
-                  {c.hasNote ? (
-                    <span style={{ position: "absolute", top: 6, right: 6, color: "var(--gold-deep)" }}>
-                      <Icon name="notebook-pen" size={12} />
-                    </span>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <span className="overline" style={{ marginRight: 8 }}>
+            {monthLabel}
+          </span>
+          <button className="oa-iconbtn">
+            <Icon name="chevron-left" size={18} />
+          </button>
+          <Button variant="secondary" onClick={() => todayDay && openDay(todayDay)}>
+            Today
+          </Button>
+          <button className="oa-iconbtn">
+            <Icon name="chevron-right" size={18} />
+          </button>
+          <Button variant="accent" icon="plus" onClick={() => todayDay && openDay(todayDay)}>
+            New
+          </Button>
+        </div>
+      </div>
 
-          {recent.length ? (
-            <div style={{ marginTop: 18 }}>
-              <div className="overline" style={{ marginBottom: 8 }}>
-                Pages this month
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                {recent.map((r) => (
-                  <button
-                    key={r.id}
-                    className="oa-acct-item"
-                    onClick={() => router.push(`/notebook?date=${r.iso}`)}
-                    style={{ justifyContent: "flex-start", gap: 10 }}
-                  >
-                    <Icon name="notebook-pen" size={14} color="var(--gold-deep)" />
-                    <span style={{ fontWeight: 600 }}>{r.title}</span>
-                    <span style={{ marginLeft: "auto", color: "var(--fg-3)", fontSize: 12 }}>{r.label}</span>
+      <div className="nb-cal">
+        <div className="nb-cal-dow">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+            <div key={d}>{d}</div>
+          ))}
+        </div>
+        <div className="nb-cal-grid">
+          {cells.map((c, i) => (
+            <div key={i} className={`nb-day ${c.other ? "other" : ""} ${c.today ? "today" : ""}`}>
+              <div className="nb-day-top">
+                {!c.other ? (
+                  <button className="nb-day-add" onClick={() => openDay(c.day)} title="Add an entry">
+                    <Icon name="plus" size={14} />
                   </button>
+                ) : (
+                  <span />
+                )}
+                <span className="nb-day-num">{c.day}</span>
+              </div>
+              <div className="nb-day-list">
+                {(c.entries ?? []).map((e) => (
+                  <div key={e.id} className="nb-chip" onClick={() => openDay(c.day)}>
+                    <div className="nb-chip-head">
+                      <span className="nb-chip-icon">
+                        <Icon name="notebook-pen" size={12} />
+                      </span>
+                      <span className="nb-chip-title">{e.title || "Untitled"}</span>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
-          ) : null}
+          ))}
         </div>
       </div>
 
@@ -147,28 +121,56 @@ function DayEditor({ selected }: { selected: Selected }) {
   }
 
   return (
-    <div style={{ borderLeft: "1px solid var(--line-2)", paddingLeft: 20 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-        <div className="overline">{selected.label}</div>
-        <button className="oa-iconbtn" onClick={() => router.push("/notebook")} title="Close">
-          <Icon name="x" size={16} />
-        </button>
-      </div>
-      <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Page title (e.g. Daily breakdown)" />
-      <div style={{ marginTop: 10 }}>
-        <Textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={14}
-          placeholder="Write your page — what you saw, what you did, what to improve…"
-          style={{ width: "100%" }}
-        />
-      </div>
-      <div style={{ marginTop: 12, display: "flex", gap: 8, alignItems: "center" }}>
-        <Button variant="accent" icon="check" onClick={save} disabled={pending}>
-          {pending ? "Saving…" : "Save page"}
-        </Button>
-        {saved ? <span style={{ color: "var(--profit)", fontSize: 13 }}>Saved</span> : null}
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(11,12,16,0.45)",
+        zIndex: 100,
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        padding: "7vh 16px 16px",
+        overflowY: "auto",
+      }}
+      onClick={() => router.push("/notebook")}
+    >
+      <div className="oa-card" style={{ width: "100%", maxWidth: 640, padding: 0 }} onClick={(e) => e.stopPropagation()}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "16px 20px",
+            borderBottom: "1px solid var(--line-2)",
+          }}
+        >
+          <div className="overline">{selected.label}</div>
+          <button className="oa-iconbtn" onClick={() => router.push("/notebook")} title="Close">
+            <Icon name="x" size={18} />
+          </button>
+        </div>
+        <div style={{ padding: 20 }}>
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Page title (e.g. Daily market breakdown)" />
+          <div style={{ marginTop: 10 }}>
+            <Textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={14}
+              placeholder="Write your page — what you saw, what you did, what to improve…"
+              style={{ width: "100%" }}
+            />
+          </div>
+          <div style={{ marginTop: 12, display: "flex", gap: 8, alignItems: "center", justifyContent: "flex-end" }}>
+            {saved ? <span style={{ color: "var(--profit)", fontSize: 13, marginRight: "auto" }}>Saved</span> : null}
+            <Button variant="ghost" onClick={() => router.push("/notebook")}>
+              Close
+            </Button>
+            <Button variant="accent" icon="check" onClick={save} disabled={pending}>
+              {pending ? "Saving…" : "Save page"}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

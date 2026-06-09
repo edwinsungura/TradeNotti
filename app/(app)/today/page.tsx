@@ -3,9 +3,9 @@ import { startOfDay } from "date-fns";
 import { requireUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { Card, CardHeader, Icon, TradeRow, EmptyState } from "@/components/ui";
-import { formatMoney } from "@/lib/format";
 import { toTradeRow, isToday } from "@/lib/view";
-import { InsightGenerate } from "@/components/insight-generate";
+import { TodayInsightCard } from "@/components/today-insight-card";
+import { LogTradeTrigger } from "@/components/log-trade-trigger";
 
 export const dynamic = "force-dynamic";
 
@@ -24,14 +24,10 @@ export default async function TodayPage() {
   ]);
 
   const todays = trades.filter((t) => isToday(t.entryAt ?? t.createdAt));
-  const todayPnl = todays.reduce((s, t) => s + (t.pnl ?? 0), 0);
 
-  const dateLabel = new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  const dateLabel = new Date()
+    .toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+    .toUpperCase();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
@@ -44,67 +40,28 @@ export default async function TodayPage() {
             {greeting}, {user.name || "trader"}.
           </h1>
         </div>
-        <div style={{ textAlign: "right" }}>
-          <div className="overline">P&amp;L today</div>
-          <div
-            className="oa-kpi-value"
-            style={{ color: todayPnl > 0 ? "var(--profit)" : todayPnl < 0 ? "var(--loss)" : "var(--ink)" }}
-          >
-            {formatMoney(todayPnl)}
-          </div>
-        </div>
       </div>
 
       <div className="oa-grid-12">
-        {/* Daily AI insight */}
-        <Card style={{ gridColumn: "span 8", background: "var(--gold-wash)", borderColor: "var(--gold)" }}>
-          <div className="overline" style={{ color: "var(--stone-700)" }}>
-            Daily insight{insight?.tag ? ` · ${insight.tag}` : ""}
-          </div>
-          <div style={{ display: "flex", gap: 12, marginTop: 12, alignItems: "flex-start" }}>
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 8,
-                background: "var(--gold)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <Icon name="sparkles" size={18} color="var(--ink)" />
-            </div>
-            <p className="t-body" style={{ margin: 0, color: "var(--stone-700)" }}>
-              {insight?.content ??
-                "Your daily insight is generated each morning from your recent trades, rules, and stats. Log a few trades and check back tomorrow."}
-            </p>
-          </div>
-          <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-            {insight ? (
-              <Link href="/analytics" className="oa-btn oa-btn-primary oa-btn-md">
-                See report <Icon name="arrow-right" size={16} />
-              </Link>
-            ) : (
-              <InsightGenerate />
-            )}
-          </div>
-        </Card>
+        <TodayInsightCard
+          hasInsight={!!insight}
+          tag={insight?.tag ?? null}
+          content={
+            insight?.content ??
+            "Your daily insight is generated each morning from your recent trades, rules, and stats. Log a few trades and generate today's insight."
+          }
+        />
 
         {/* Quick log */}
         <Card style={{ gridColumn: "span 4" }}>
           <div className="overline">Quick log</div>
           <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-            <Link href="/journal?log=trade" className="oa-btn oa-btn-accent oa-btn-md" style={{ width: "100%", justifyContent: "center" }}>
-              <Icon name="plus" size={16} /> Log trade
-            </Link>
-            <Link href="/journal?log=missed" className="oa-btn oa-btn-secondary oa-btn-md" style={{ width: "100%", justifyContent: "center" }}>
-              <Icon name="eye-off" size={16} /> Log missed trade
-            </Link>
-            <Link href="/journal?log=backtest" className="oa-btn oa-btn-ghost oa-btn-md" style={{ width: "100%", justifyContent: "center" }}>
-              <Icon name="rewind" size={16} /> Log backtest
-            </Link>
+            <LogTradeTrigger mode="missed" variant="secondary" icon="eye-off" fullWidth>
+              Log missed trade
+            </LogTradeTrigger>
+            <LogTradeTrigger mode="backtest" variant="ghost" icon="rewind" fullWidth>
+              Log backtest
+            </LogTradeTrigger>
           </div>
         </Card>
       </div>
@@ -156,9 +113,9 @@ export default async function TodayPage() {
             title="No trades logged today."
             body="Just took one? Log it now while the setup is fresh."
             action={
-              <Link href="/journal?log=trade" className="oa-btn oa-btn-accent oa-btn-md">
-                <Icon name="plus" size={16} /> Log trade
-              </Link>
+              <LogTradeTrigger mode="trade" variant="accent" icon="plus">
+                Log trade
+              </LogTradeTrigger>
             }
           />
         )}
