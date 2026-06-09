@@ -2,6 +2,9 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { icons } from "lucide-react";
+import { formatMoney } from "@/lib/format";
+
+export { formatMoney };
 
 /* ============================================================
    Shared UI kit — ported from the approved TradeNotti prototype.
@@ -402,18 +405,6 @@ export function WinRateRing({ value = 0.62, size = 88, stroke = 10 }: { value?: 
       </text>
     </svg>
   );
-}
-
-/* -- Formatters --------------------------------------------------- */
-export function formatMoney(n: number | null | undefined, opts: { showSign?: boolean; decimals?: number } = {}) {
-  const { showSign = true, decimals = 2 } = opts;
-  if (n == null) return "—";
-  const sign = n > 0 ? "+" : n < 0 ? "−" : "";
-  const abs = Math.abs(n).toLocaleString("en-US", {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  });
-  return `${showSign ? sign : ""}$${abs}`;
 }
 
 /* -- TradeRow ----------------------------------------------------- */
