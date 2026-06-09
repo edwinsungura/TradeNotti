@@ -1,0 +1,297 @@
+// TradeNotti — Prisma schema
+// Data model derived from the approved plan + prototype mock data.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Auth.js (NextAuth) core models ----------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  hashedPassword String?
+
+  // Profile / preferences
+  timezone      String   @default("UTC")
+  tradingFocus  String   @default("forex") // forex | crypto | stocks | mixed
+  theme         String   @default("light") // light | dark
+  accentPalette String   @default("iris")  // iris | blue | emerald | gold
+  watchlist     String[] @default([])
+  onboardedAt   DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  accounts       Account[]
+  authAccounts   AuthAccount[]
+  sessions       Session[]
+  trades         Trade[]
+  missedTrades   MissedTrade[]
+  backtests      Backtest[]
+  rules          Rule[]
+  tags           Tag[]
+  notebookEntries NotebookEntry[]
+  documents      Document[]
+  importBatches  ImportBatch[]
+  insights       Insight[]
+}
+
+model AuthAccount {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---- Trading domain --------------------------------------------------------
+
+enum AssetClass {
+  FOREX
+  CRYPTO
+  STOCKS
+  OTHER
+}
+
+enum Direction {
+  LONG
+  SHORT
+}
+
+enum TradeStatus {
+  OPEN
+  CLOSED
+}
+
+model Account {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String                      // "Live · FTMO 100k"
+  broker    String?                     // "MetaTrader 5"
+  currency  String   @default("USD")
+  kind      String   @default("live")   // live | demo | prop
+  balance   String?                     // display string, e.g. "$104,210"
+  createdAt DateTime @default(now())
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trades        Trade[]
+  importBatches ImportBatch[]
+
+  @@index([userId])
+}
+
+model Trade {
+  id           String      @id @default(cuid())
+  userId       String
+  accountId    String
+
+  pair         String
+  assetClass   AssetClass  @default(FOREX)
+  direction    Direction
+  status       TradeStatus @default(CLOSED)
+
+  entryPrice   Float?
+  sl           Float?
+  tp           Float?
+  exitPrice    Float?
+  pnl          Float?
+  rr           Float?      // R-multiple
+  roi          Float?
+  positionSize Float?
+
+  grade        String?     // "High probability" | "Low probability"
+  phase        String?     // phase of market (markup, etc.)
+  setup        String?     // free-form notes
+
+  entryAt      DateTime?
+  exitAt       DateTime?
+
+  externalId   String?     // for CSV dedup
+  importBatchId String?
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account     Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  importBatch ImportBatch? @relation(fields: [importBatchId], references: [id], onDelete: SetNull)
+  tags        TradeTag[]
+  screenshots Screenshot[]
+
+  @@unique([accountId, externalId])
+  @@index([userId])
+  @@index([accountId])
+}
+
+model Tag {
+  id     String     @id @default(cuid())
+  userId String
+  name   String
+
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trades TradeTag[]
+
+  @@unique([userId, name])
+}
+
+model TradeTag {
+  tradeId String
+  tagId   String
+  trade   Trade @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  tag     Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([tradeId, tagId])
+}
+
+model Screenshot {
+  id      String  @id @default(cuid())
+  tradeId String
+  kind    String  @default("before") // before | after
+  url     String
+
+  trade Trade @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+
+  @@index([tradeId])
+}
+
+model MissedTrade {
+  id         String    @id @default(cuid())
+  userId     String
+  pair       String
+  direction  Direction
+  reason     String?
+  potential  String?   // e.g. "+1.8R"
+  grade      String?
+  occurredAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Backtest {
+  id         String  @id @default(cuid())
+  userId     String
+  name       String
+  tradeCount Int     @default(0)
+  winRate    Float?
+  avgR       Float?
+  net        Float?
+  period     String?
+  notes      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Rule {
+  id        String   @id @default(cuid())
+  userId    String
+  text      String
+  category  String   @default("Risk")
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model NotebookEntry {
+  id         String   @id @default(cuid())
+  userId     String
+  date       DateTime // the calendar day this page belongs to
+  title      String?
+  content    Json?    // block JSON
+  templateId String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  content   Json?    // block JSON
+  kind      String   @default("doc") // doc | template
+  builtIn   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ImportBatch {
+  id        String   @id @default(cuid())
+  userId    String
+  accountId String
+  filename  String
+  rowCount  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  trades  Trade[]
+
+  @@index([userId])
+}
+
+model Insight {
+  id         String   @id @default(cuid())
+  userId     String
+  date       DateTime // calendar day (one per user/day)
+  tag        String?  // "Edge" | "Risk" | "Time"
+  content    String
+  model      String?
+  tokensUsed Int?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+}
