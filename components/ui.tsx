@@ -41,42 +41,56 @@ export function Icon({
   );
 }
 
-/* -- BrandLogo: "TradeNotti" wordmark with a hand-drawn iris underline ---- */
+/* -- BrandLogo: "TradeNotti" wordmark over an iris equity-curve mark -------- */
 export function BrandLogo({ size = 20, onClick }: { size?: number; onClick?: () => void }) {
   return (
     <span
       className="oa-logo"
       onClick={onClick}
-      style={{ display: "inline-flex", alignItems: "center", cursor: onClick ? "pointer" : undefined }}
+      style={{
+        display: "inline-flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        lineHeight: 1,
+        gap: size * 0.18,
+        cursor: onClick ? "pointer" : undefined,
+      }}
     >
-      <span style={{ position: "relative", display: "inline-block", lineHeight: 1 }}>
-        <span
-          className="oa-logo-word pp-brand-word"
-          style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 700,
-            fontSize: size,
-            letterSpacing: "-0.02em",
-            color: "var(--ink)",
-          }}
-        >
-          TradeNotti
-        </span>
-        <svg
-          aria-hidden
-          viewBox="0 0 120 8"
-          preserveAspectRatio="none"
-          style={{ position: "absolute", left: 0, right: 0, bottom: -Math.round(size * 0.18), width: "100%", height: size * 0.34 }}
-        >
-          <path
-            d="M2 5.2 C 26 1.6, 58 1.6, 84 3.8 C 100 5.1, 110 4.2, 118 2.6"
-            fill="none"
-            stroke="var(--gold)"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-          />
-        </svg>
+      <span
+        className="oa-logo-word pp-brand-word"
+        style={{
+          fontFamily: "var(--font-display)",
+          fontWeight: 800,
+          fontSize: size,
+          letterSpacing: "-0.02em",
+          color: "var(--ink)",
+        }}
+      >
+        TradeNotti
       </span>
+      {/* Equity-curve mark: faint baseline + iris polyline with an open node and a haloed end dot */}
+      <svg
+        aria-hidden
+        viewBox="0 0 112 16"
+        width={`${size * 5.6}px`}
+        height={`${size * 0.8}px`}
+        style={{ display: "block", overflow: "visible" }}
+      >
+        <line x1="2" y1="14" x2="110" y2="14" stroke="var(--line-1)" strokeWidth="1" />
+        <polyline
+          points="2,11 14,9 26,12 40,7 54,10 68,5 82,8 94,9 106,3"
+          fill="none"
+          stroke="var(--gold)"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        {/* open node mid-curve */}
+        <circle cx="82" cy="8" r="2.4" fill="var(--paper, #fff)" stroke="var(--gold)" strokeWidth="1.8" />
+        {/* haloed end node */}
+        <circle cx="106" cy="3" r="5.2" fill="var(--gold)" opacity="0.18" />
+        <circle cx="106" cy="3" r="3" fill="var(--gold)" />
+      </svg>
     </span>
   );
 }
