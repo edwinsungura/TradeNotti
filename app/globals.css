@@ -12,7 +12,6 @@
 /* -- Fonts (substitutions flagged in README) -----------------
    "Ledger" identity: Bricolage Grotesque (editorial display) +
    Hanken Grotesk (humanist body) + JetBrains Mono (figures). */
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Hanken+Grotesk:wght@400..800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
   /* ------------------------------------------------------------
@@ -74,9 +73,9 @@
      Display — Bricolage Grotesque · Body — Hanken Grotesk
      Mono — JetBrains Mono (used for tickers, prices, P&L)
      ------------------------------------------------------------ */
-  --font-display: 'Bricolage Grotesque', 'Space Grotesk', system-ui, sans-serif;
-  --font-body:    'Hanken Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  --font-display: var(--font-bricolage), 'Space Grotesk', system-ui, sans-serif;
+  --font-body:    var(--font-hanken), 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:    var(--font-jetbrains), 'SF Mono', Menlo, Consolas, monospace;
 
   /* Type scale — modular, designed for dense data + editorial moments */
   --t-display:    clamp(48px, 6vw, 88px); /* @kind font */  /* hero numbers, page openers */
