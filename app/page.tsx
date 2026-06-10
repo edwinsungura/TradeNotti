@@ -27,7 +27,6 @@ export default function LandingPage() {
           <BrandLogo size={18} />
         </div>
         <div className="pp-right">
-          <Link href="#pricing">Pricing</Link>
           <Link href="/login">Sign in</Link>
           <Link href="/signup" className="oa-btn oa-btn-accent oa-btn-md">
             Get started
