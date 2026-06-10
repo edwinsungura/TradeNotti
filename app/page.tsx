@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Icon, BrandLogo } from "@/components/ui";
 
-/* Build a smooth hero equity-curve path (static, deterministic). */
+/* Deterministic hero equity-curve path (matches the prototype). */
 function heroEquityPath() {
   const eqPts = 44;
   const eq: number[] = [];
@@ -45,9 +45,9 @@ export default function LandingPage() {
               &amp; reviewing <em>made simple.</em>
             </h1>
             <p className="pp-hero-sub">
-              Stop wasting hours organizing screenshots, notes, and trade reviews manually. TradeNotti
-              helps traders capture, organize, and review their trades in one clean workspace — so they
-              can focus on improving performance.
+              Stop wasting hours organizing screenshots, notes, and trade reviews manually. TradeNotti automatically
+              helps traders capture, organize, and review their trades in one clean workspace — so they can focus on
+              improving performance.
             </p>
             <div className="pp-hero-cta">
               <Link href="/signup" className="oa-btn oa-btn-accent oa-btn-md">
@@ -57,10 +57,11 @@ export default function LandingPage() {
                 Free trial
               </Link>
             </div>
-            <p className="pp-hero-meta">Built for serious traders who want clarity, discipline, and growth.</p>
+            <p className="pp-hero-meta">Trusted by serious traders who want clarity, discipline, and growth.</p>
           </div>
 
           <div className="pp-herofig">
+            {/* Main app window */}
             <div className="pp-win">
               <div className="pp-win-bar">
                 <span className="pp-win-dot" style={{ background: "#E5605B" }} />
@@ -95,14 +96,7 @@ export default function LandingPage() {
                     </linearGradient>
                   </defs>
                   <path d={`${eqPath} L320 96 L0 96 Z`} fill="url(#pp-eq)" />
-                  <path
-                    d={eqPath}
-                    fill="none"
-                    stroke="var(--profit)"
-                    strokeWidth="2.5"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                  />
+                  <path d={eqPath} fill="none" stroke="var(--profit)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
                 </svg>
                 <div className="pp-win-trades">
                   <div className="pp-win-trow">
@@ -127,6 +121,7 @@ export default function LandingPage() {
               </div>
             </div>
 
+            {/* Floating: trade logged */}
             <div className="pp-float pp-float-a">
               <div className="pp-float-ic pp-float-ic-up">
                 <Icon name="trending-up" size={16} />
@@ -139,13 +134,14 @@ export default function LandingPage() {
               </div>
             </div>
 
+            {/* Floating: synced badge */}
             <div className="pp-float pp-float-b">
               <div className="pp-float-ic pp-float-ic-sync">
-                <Icon name="notebook-pen" size={15} />
+                <Icon name="refresh-cw" size={15} />
               </div>
               <div>
-                <div className="pp-float-t">Journaled in seconds</div>
-                <div className="pp-float-s">Grade, notes &amp; tags</div>
+                <div className="pp-float-t">Synced from MT5</div>
+                <div className="pp-float-s">Entry, exit &amp; ROI · auto</div>
               </div>
             </div>
           </div>
@@ -174,8 +170,9 @@ export default function LandingPage() {
               </span>
               <h3>Three ways to journal — all in seconds.</h3>
               <p>
-                Log a live <b>trade</b>, a <b>missed trade</b> you should have taken, or a <b>backtest</b> of a
-                setup you&apos;re building. Drop chart screenshots, tag the pair, grade the idea, and add notes.
+                Log a live <b>trade</b>, a <b>missed trade</b> you should have taken, or a <b>backtest</b> of a setup
+                you&apos;re building. Drop chart screenshots, tag the pair, grade the idea, and add notes — without the
+                twenty-field forms other tools force on you.
               </p>
               <ul className="pp-show-list">
                 <li>
@@ -220,17 +217,86 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* 2 — Customizable Notebook */}
+          {/* 2 — Auto-capture / MT5 sync */}
           <div className="pp-show-row reverse">
+            <div className="pp-show-copy">
+              <span className="pp-show-tag">
+                <Icon name="refresh-cw" size={14} /> Auto-capture
+              </span>
+              <h3>The numbers fill themselves in.</h3>
+              <p>
+                Connect your account and TradeNotti pulls entry, exit, position size and ROI straight from{" "}
+                <b>MT4 / MT5</b> — so you only journal the part that makes you better: the thinking. Your read on the
+                market, the grade, the stop in pips, the phase you saw.
+              </p>
+              <ul className="pp-show-list">
+                <li>
+                  <Icon name="check" size={15} /> Entry, exit, size &amp; ROI synced automatically
+                </li>
+                <li>
+                  <Icon name="check" size={15} /> You add the judgment — grade, direction, notes
+                </li>
+                <li>
+                  <Icon name="check" size={15} /> No more copy-pasting from your broker
+                </li>
+              </ul>
+            </div>
+            <div className="pp-show-visual">
+              <div className="pp-mini-card">
+                <div className="pp-mini-head">
+                  <span className="overline">Outcome</span>
+                  <span className="pp-sync">
+                    <Icon name="refresh-cw" size={10} /> Synced from MT5
+                  </span>
+                </div>
+                <div className="pp-mini-pnl pp-pos">+$510.00</div>
+                <div className="pp-mini-meta">
+                  <div>
+                    <span>
+                      Entry date <i className="pp-src auto">Auto</i>
+                    </span>
+                    <b className="pp-mono">Jun 2 · 09:42</b>
+                  </div>
+                  <div>
+                    <span>
+                      Position size <i className="pp-src auto">Auto</i>
+                    </span>
+                    <b className="pp-mono">0.75 lots</b>
+                  </div>
+                  <div>
+                    <span>
+                      ROI <i className="pp-src auto">Auto</i>
+                    </span>
+                    <b className="pp-mono pp-pos">+2.04%</b>
+                  </div>
+                  <div>
+                    <span>
+                      Trade grade <i className="pp-src man">Journal</i>
+                    </span>
+                    <b>High probability</b>
+                  </div>
+                  <div>
+                    <span>
+                      Phase of market <i className="pp-src man">Journal</i>
+                    </span>
+                    <b>Markup</b>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3 — Customizable Notebook */}
+          <div className="pp-show-row">
             <div className="pp-show-copy">
               <span className="pp-show-tag">
                 <Icon name="calendar" size={14} /> Notebook
               </span>
               <h3>A calendar that&apos;s blank until you make it yours.</h3>
               <p>
-                The Notebook starts empty. Hit <b>+</b> on any day to write from a blank page or your own
-                template — daily breakdowns, weekly reviews, projections, recaps. Build a template once and
-                reuse it forever.
+                The Notebook starts empty. Hit <b>+</b> on any day to write from a blank page or your own template —
+                daily breakdowns, weekly reviews, projections, recaps. Build a template once, save it, and reuse it
+                forever.
               </p>
               <ul className="pp-show-list">
                 <li>
@@ -256,13 +322,7 @@ export default function LandingPage() {
                   {Array.from({ length: 28 }, (_, i) => {
                     const v = Math.sin(i * 1.3) + Math.cos(i * 0.7);
                     const c =
-                      i > 24
-                        ? "var(--stone-100)"
-                        : v > 0.4
-                          ? "var(--profit)"
-                          : v < -0.4
-                            ? "var(--loss)"
-                            : "var(--stone-200)";
+                      i > 24 ? "var(--stone-100)" : v > 0.4 ? "var(--profit)" : v < -0.4 ? "var(--loss)" : "var(--stone-200)";
                     return <div key={i} style={{ background: c }} />;
                   })}
                 </div>
@@ -270,16 +330,17 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* 3 — Analytics & filtering */}
-          <div className="pp-show-row">
+          {/* 4 — Analytics & filtering */}
+          <div className="pp-show-row reverse">
             <div className="pp-show-copy">
               <span className="pp-show-tag">
                 <Icon name="layout-dashboard" size={14} /> Review
               </span>
               <h3>See what&apos;s working — in plain numbers.</h3>
               <p>
-                Win rate, average R, wins vs losses, net P&amp;L and drawdown by period. Then slice your trades
-                with a <b>filter for anything</b> — date, direction, outcome, grade, pair, tags, or R multiple.
+                Win rate, average R, wins vs losses, net P&amp;L and drawdown by period. Then slice your trades with a{" "}
+                <b>filter for anything</b> — date, direction, outcome, grade, pair, tags, or R multiple — to find exactly
+                where your edge lives.
               </p>
               <ul className="pp-show-list">
                 <li>
@@ -321,7 +382,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* MID-PAGE CTA */}
+        {/* Mid-page CTA */}
         <section className="pp-midcta">
           <div className="pp-midcta-inner">
             <div>
@@ -334,10 +395,10 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* EXTRAS (Refer & earn removed) */}
+        {/* Accountability extras (Refer & earn intentionally omitted) */}
         <div className="pp-features">
           <h2>And the things that keep you accountable.</h2>
-          <p className="pp-features-sub">One profile, every account — plus a daily insight and a rulebook that holds you to your plan.</p>
+          <p className="pp-features-sub">One profile, every account — plus ways to stay on track.</p>
           <div className="pp-features-grid">
             <div className="pp-feat">
               <div className="pp-feat-icon">
@@ -348,10 +409,10 @@ export default function LandingPage() {
             </div>
             <div className="pp-feat">
               <div className="pp-feat-icon">
-                <Icon name="book-marked" size={20} />
+                <Icon name="users" size={20} />
               </div>
-              <h3>Your rulebook</h3>
-              <p>Write the rules you trade by. TradeNotti keeps them front and centre and scores your adherence.</p>
+              <h3>Accountability partners</h3>
+              <p>Share an account with a trading partner to keep each other honest — reviews, rules, and results in the open.</p>
             </div>
             <div className="pp-feat">
               <div className="pp-feat-icon">
@@ -363,14 +424,16 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* PRICING (referral footnote removed) */}
+        {/* PRICING (Referred? line intentionally omitted) */}
         <section className="pp-pricing" id="pricing">
           <div className="pp-section-head" style={{ textAlign: "center", margin: "0 auto 48px" }}>
             <span className="overline" style={{ display: "block", marginBottom: 12, color: "var(--gold-deep)" }}>
               Pricing
             </span>
             <h2>One simple plan. Everything included.</h2>
-            <p style={{ margin: "14px auto 0" }}>No tiers to decode, no per-account fees.</p>
+            <p style={{ margin: "14px auto 0" }}>
+              No tiers to decode, no per-account fees. Less than a third of what other serious journals charge.
+            </p>
           </div>
           <div className="pp-plans">
             <div className="pp-plan-card">
@@ -407,6 +470,9 @@ export default function LandingPage() {
                   <Icon name="check" size={15} /> Unlimited trades, missed trades &amp; backtests
                 </li>
                 <li>
+                  <Icon name="check" size={15} /> Auto-capture from MT4 / MT5
+                </li>
+                <li>
                   <Icon name="check" size={15} /> Customizable Notebook &amp; templates
                 </li>
                 <li>
@@ -416,7 +482,7 @@ export default function LandingPage() {
                   <Icon name="check" size={15} /> Multiple accounts under one profile
                 </li>
                 <li>
-                  <Icon name="check" size={15} /> Daily AI insight &amp; accountability partners
+                  <Icon name="check" size={15} /> Accountability partners
                 </li>
               </ul>
               <Link href="/signup" className="oa-btn oa-btn-accent oa-btn-md" style={{ width: "100%", justifyContent: "center" }}>
