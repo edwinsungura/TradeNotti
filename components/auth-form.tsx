@@ -36,7 +36,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
         setLoading(false);
         return;
       }
-      router.push(isSignup ? "/onboarding" : "/today");
+      router.push("/today");
       router.refresh();
     } catch {
       setError("Something went wrong. Please try again.");
@@ -57,7 +57,10 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
             </span>
           ) : (
             <span style={{ color: "var(--fg-2)" }}>
-              No account? <Link href="/signup">Start free trial</Link>
+              No account?{" "}
+              <Link href="/signup" style={{ color: "var(--accent)", fontWeight: 600 }}>
+                Create free account
+              </Link>
             </span>
           )}
         </div>
@@ -133,8 +136,26 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
               </Button>
             </form>
 
+            <p className="pp-auth-foot" style={{ textAlign: "center", marginTop: 16 }}>
+              {isSignup ? (
+                <>
+                  Already have an account?{" "}
+                  <Link href="/login" style={{ color: "var(--accent)", fontWeight: 600 }}>
+                    Sign in
+                  </Link>
+                </>
+              ) : (
+                <>
+                  Don&apos;t have an account?{" "}
+                  <Link href="/signup" style={{ color: "var(--accent)", fontWeight: 600 }}>
+                    Create one free
+                  </Link>
+                </>
+              )}
+            </p>
+
             {isSignup && (
-              <p className="pp-auth-foot">
+              <p className="pp-auth-foot" style={{ textAlign: "center" }}>
                 By starting your trial you agree to our <a>Terms</a> and <a>Privacy</a>.
               </p>
             )}
