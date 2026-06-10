@@ -41,35 +41,41 @@ export function Icon({
   );
 }
 
-/* -- BrandLogo: iris ledger-tick mark + wordmark ----------------- */
+/* -- BrandLogo: "TradeNotti" wordmark with a hand-drawn iris underline ---- */
 export function BrandLogo({ size = 20, onClick }: { size?: number; onClick?: () => void }) {
   return (
     <span
       className="oa-logo"
       onClick={onClick}
-      style={{ display: "inline-flex", alignItems: "center", gap: 9, cursor: onClick ? "pointer" : undefined }}
+      style={{ display: "inline-flex", alignItems: "center", cursor: onClick ? "pointer" : undefined }}
     >
-      <svg width={size + 4} height={size + 4} viewBox="0 0 24 24" fill="none" aria-hidden>
-        <rect x="2" y="2" width="20" height="20" rx="6" fill="var(--gold)" />
-        <path
-          d="M7 13.5l3 3 7-8"
-          stroke="#fff"
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-      <span
-        className="oa-logo-word pp-brand-word"
-        style={{
-          fontFamily: "var(--font-display)",
-          fontWeight: 700,
-          fontSize: size * 0.8,
-          letterSpacing: "-0.01em",
-          color: "var(--ink)",
-        }}
-      >
-        TradeNotti
+      <span style={{ position: "relative", display: "inline-block", lineHeight: 1 }}>
+        <span
+          className="oa-logo-word pp-brand-word"
+          style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 700,
+            fontSize: size,
+            letterSpacing: "-0.02em",
+            color: "var(--ink)",
+          }}
+        >
+          TradeNotti
+        </span>
+        <svg
+          aria-hidden
+          viewBox="0 0 120 8"
+          preserveAspectRatio="none"
+          style={{ position: "absolute", left: 0, right: 0, bottom: -Math.round(size * 0.18), width: "100%", height: size * 0.34 }}
+        >
+          <path
+            d="M2 5.2 C 26 1.6, 58 1.6, 84 3.8 C 100 5.1, 110 4.2, 118 2.6"
+            fill="none"
+            stroke="var(--gold)"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+          />
+        </svg>
       </span>
     </span>
   );

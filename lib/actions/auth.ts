@@ -39,6 +39,7 @@ export async function registerUser(formData: FormData): Promise<SignupResult> {
       name: name || null,
       hashedPassword,
       tradingFocus,
+      onboardedAt: new Date(),
     },
   });
 
