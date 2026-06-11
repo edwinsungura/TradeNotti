@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -26,6 +26,16 @@ export const metadata: Metadata = {
   title: "TradeNotti — Trade journaling & reviewing made simple",
   description:
     "A clean workspace for forex & crypto traders to capture, organize, and review every trade — with rules, a notebook, resources, and a daily AI insight.",
+  applicationName: "TradeNotti",
+  appleWebApp: {
+    capable: true,
+    title: "TradeNotti",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#5347F0",
 };
 
 export default function RootLayout({
