@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { Button, BrandLogo, Field, Input, Select } from "@/components/ui";
+import { Button, BrandLogo, Field, Input } from "@/components/ui";
 import { registerUser } from "@/lib/actions/auth";
 
 export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
@@ -52,16 +52,11 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
         </Link>
         <div className="pp-right">
           {isSignup ? (
-            <span style={{ color: "var(--fg-2)" }}>
-              Have an account? <Link href="/login">Sign in</Link>
-            </span>
+            <Link href="/login">Sign in</Link>
           ) : (
-            <span style={{ color: "var(--fg-2)" }}>
-              No account?{" "}
-              <Link href="/signup" style={{ color: "var(--accent)", fontWeight: 600 }}>
-                Create free account
-              </Link>
-            </span>
+            <Link href="/signup" style={{ color: "var(--accent)", fontWeight: 600 }}>
+              Start free trial
+            </Link>
           )}
         </div>
       </header>
@@ -69,8 +64,8 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
       <div className="pp-auth pp-auth-centered">
         <div className="pp-auth-left">
           <div className="pp-auth-card">
-            <h1>{isSignup ? "Start your trial." : "Welcome back."}</h1>
-            <p className="pp-auth-sub">{isSignup ? "14 days free. No card required." : "Pick up where you left off."}</p>
+            <h1>{isSignup ? "Start your free trial." : "Welcome back."}</h1>
+            {isSignup && <p className="pp-auth-sub">14 days free. No card required.</p>}
 
             <form className="pp-auth-form" onSubmit={onSubmit}>
               <button
@@ -90,8 +85,8 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
               <div className="pp-auth-divider">or with email</div>
 
               {isSignup && (
-                <Field label="Name">
-                  <Input name="name" type="text" placeholder="Your name" autoComplete="name" />
+                <Field label="Username">
+                  <Input name="name" type="text" placeholder="yourname" autoComplete="username" />
                 </Field>
               )}
               <Field label="Email">
@@ -106,19 +101,12 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
                   autoComplete={isSignup ? "new-password" : "current-password"}
                 />
               </Field>
-              {isSignup && (
-                <Field label="Trading focus">
-                  <Select
-                    name="tradingFocus"
-                    defaultValue="forex"
-                    options={[
-                      { value: "forex", label: "Forex" },
-                      { value: "crypto", label: "Crypto" },
-                      { value: "stocks", label: "Stocks / indices" },
-                      { value: "mixed", label: "Mixed" },
-                    ]}
-                  />
-                </Field>
+              {!isSignup && (
+                <div style={{ textAlign: "right", marginTop: -4 }}>
+                  <Link href="/forgot-password" style={{ fontSize: 13, color: "var(--fg-3)", fontWeight: 500 }}>
+                    Forgot password?
+                  </Link>
+                </div>
               )}
 
               {error ? (
@@ -139,16 +127,16 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
             <p className="pp-auth-foot" style={{ textAlign: "center", marginTop: 16 }}>
               {isSignup ? (
                 <>
-                  Already have an account?{" "}
+                  Have an account?{" "}
                   <Link href="/login" style={{ color: "var(--accent)", fontWeight: 600 }}>
                     Sign in
                   </Link>
                 </>
               ) : (
                 <>
-                  Don&apos;t have an account?{" "}
+                  No account?{" "}
                   <Link href="/signup" style={{ color: "var(--accent)", fontWeight: 600 }}>
-                    Create one free
+                    Start free trial
                   </Link>
                 </>
               )}

@@ -1,5 +1,4 @@
 import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
@@ -11,8 +10,11 @@ const credentialsSchema = z.object({
   password: z.string().min(8),
 });
 
+// JWT sessions + manual user persistence. We deliberately do NOT use the
+// Prisma adapter: this schema's `Account` model is the trading account, while
+// OAuth links live in `AuthAccount`, so the adapter's default `Account` table
+// would collide. Google users are upserted into `User` in the signIn callback.
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   trustHost: true,
   session: { strategy: "jwt" },
   pages: {
@@ -45,8 +47,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      // First Google login: create the trader's account row if it doesn't exist.
+      if (account?.provider === "google" && user.email) {
+        const existing = await prisma.user.findUnique({ where: { email: user.email } });
+        if (!existing) {
+          await prisma.user.create({
+            data: {
+              email: user.email,
+              name: user.name ?? null,
+              image: user.image ?? null,
+              onboardedAt: new Date(),
+            },
+          });
+        } else if (!existing.image && user.image) {
+          await prisma.user.update({ where: { email: user.email }, data: { image: user.image } });
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
-      if (user) token.id = user.id as string;
+      // Resolve the real DB user id from the email (covers both providers).
+      const email = user?.email ?? token.email;
+      if (email && !token.id) {
+        const dbUser = await prisma.user.findUnique({ where: { email } });
+        if (dbUser) token.id = dbUser.id;
+      }
       return token;
     },
     async session({ session, token }) {
