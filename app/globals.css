@@ -2883,3 +2883,53 @@ body { background: var(--bg-1); color: var(--fg-1); }
   .pp-onb-choices { grid-template-columns: 1fr; }
 }
 
+
+/* ============================================================
+   Landing — editorial kickers, ruled spec lists, voice journal
+   (updated prototype: "Just talk. We journal it.")
+   ============================================================ */
+
+/* Numbered editorial kicker — "01 — JOURNAL" */
+.pp-kicker { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.pp-kicker-num { font: 800 16px/1 var(--font-display); color: var(--gold); letter-spacing: -0.01em; }
+.pp-kicker-rule { width: 30px; height: 1px; background: var(--line-2); display: inline-block; }
+.pp-kicker-label { font: 600 11px/1 var(--font-body); letter-spacing: 0.16em; text-transform: uppercase; color: var(--fg-3); }
+
+/* Quiet ruled feature list — hairline rows with small square markers */
+.pp-spec { list-style: none; margin: 24px 0 0; padding: 0; border-top: 1px solid var(--line-1); }
+.pp-spec li {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 2px; border-bottom: 1px solid var(--line-1);
+  font: 500 14px/1.45 var(--font-body); color: var(--fg-1);
+}
+.pp-spec li::before { content: ""; width: 6px; height: 6px; flex-shrink: 0; background: var(--gold); }
+
+/* AI voice-journal hero figure */
+.pp-voice-rec {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-1);
+  border: 1px solid var(--line-1);
+  border-radius: var(--r-md);
+}
+.pp-voice-mic {
+  width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%;
+  background: var(--gold); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.pp-voice-wave { flex: 1; display: flex; align-items: center; gap: 2.5px; height: 30px; overflow: hidden; }
+.pp-voice-wave span { width: 3px; border-radius: 2px; flex-shrink: 0; }
+.pp-voice-time { font-size: 12px; color: var(--fg-3); flex-shrink: 0; }
+
+.pp-voice-trans { margin-top: 16px; }
+.pp-voice-trans p { margin: 8px 0 0; font: italic 400 13.5px/1.55 var(--font-body); color: var(--fg-2); }
+.pp-voice-hl { color: var(--gold); font-style: normal; font-weight: 600; }
+
+.pp-voice-tags { display: flex; gap: 8px; margin-top: 16px; }
+.pp-voice-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 999px;
+  background: var(--bg-1); border: 1px solid var(--line-1);
+  font: 600 12px/1 var(--font-body); color: var(--fg-1);
+}
+.pp-voice-chip.pp-pos { color: var(--profit); }

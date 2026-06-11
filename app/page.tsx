@@ -1,25 +1,7 @@
 import Link from "next/link";
 import { Icon, BrandLogo } from "@/components/ui";
 
-/* Deterministic hero equity-curve path (matches the prototype). */
-function heroEquityPath() {
-  const eqPts = 44;
-  const eq: number[] = [];
-  let val = 0;
-  for (let i = 0; i < eqPts; i++) {
-    val += 1.1 + Math.sin(i * 0.55) * 1.4 + Math.cos(i * 0.22) * 0.8;
-    eq.push(val);
-  }
-  const eqMin = Math.min(...eq),
-    eqMax = Math.max(...eq),
-    eqRange = eqMax - eqMin || 1;
-  const coords = eq.map((d, i) => [(i / (eqPts - 1)) * 320, 96 - ((d - eqMin) / eqRange) * 84 - 6]);
-  return coords.map((c, i) => (i ? "L" : "M") + c[0].toFixed(1) + " " + c[1].toFixed(1)).join(" ");
-}
-
 export default function LandingPage() {
-  const eqPath = heroEquityPath();
-
   return (
     <div className="pp-stage" style={{ height: "auto", minHeight: "100vh", overflow: "visible" }}>
       <header className="pp-utilbar">
@@ -39,14 +21,13 @@ export default function LandingPage() {
         <div className="pp-hero">
           <div>
             <h1>
-              Trade journaling
+              Just talk.
               <br />
-              &amp; reviewing <em>made simple.</em>
+              We <em>journal it.</em>
             </h1>
             <p className="pp-hero-sub">
-              Stop wasting hours organizing screenshots, notes, and trade reviews manually. TradeNotti automatically
-              helps traders capture, organize, and review their trades in one clean workspace — so they can focus on
-              improving performance.
+              Capture trade ideas, emotions, and execution notes in seconds with AI voice journaling. Speak your review,
+              drop in your chart screenshots, and TradeNotti transcribes, organizes, and files every trade for you.
             </p>
             <div className="pp-hero-cta">
               <Link href="/signup" className="oa-btn oa-btn-accent oa-btn-md">
@@ -60,76 +41,59 @@ export default function LandingPage() {
           </div>
 
           <div className="pp-herofig">
-            {/* Main app window */}
+            {/* AI voice-journal window */}
             <div className="pp-win">
               <div className="pp-win-bar">
                 <span className="pp-win-dot" style={{ background: "#E5605B" }} />
                 <span className="pp-win-dot" style={{ background: "#E6B23C" }} />
                 <span className="pp-win-dot" style={{ background: "#4FAE6B" }} />
-                <span className="pp-win-title">TradeNotti · Dashboard</span>
+                <span className="pp-win-title">TradeNotti · AI voice journal</span>
               </div>
               <div className="pp-win-body">
-                <div className="pp-win-row">
-                  <div>
-                    <div className="overline" style={{ color: "var(--fg-3)" }}>
-                      Net P&amp;L · May
-                    </div>
-                    <div className="pp-win-pnl">+$12,408</div>
-                  </div>
-                  <div className="pp-win-kpis">
-                    <div>
-                      <b>62%</b>
-                      <span>Win rate</span>
-                    </div>
-                    <div>
-                      <b className="pp-pos">+0.96R</b>
-                      <span>Avg R</span>
-                    </div>
-                  </div>
+                <div className="pp-voice-rec">
+                  <span className="pp-voice-mic">
+                    <Icon name="mic" size={16} />
+                  </span>
+                  <span className="pp-voice-wave">
+                    {Array.from({ length: 28 }, (_, i) => {
+                      const h = 4 + Math.abs(Math.sin(i * 0.9) * 18 + Math.cos(i * 0.5) * 6);
+                      return (
+                        <span
+                          key={i}
+                          style={{ height: `${Math.min(26, h)}px`, background: i < 17 ? "var(--gold)" : "var(--stone-300)" }}
+                        />
+                      );
+                    })}
+                  </span>
+                  <span className="pp-voice-time pp-mono">0:14</span>
                 </div>
-                <svg className="pp-win-chart" viewBox="0 0 320 96" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="pp-eq" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="0%" stopColor="var(--profit)" stopOpacity="0.22" />
-                      <stop offset="100%" stopColor="var(--profit)" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path d={`${eqPath} L320 96 L0 96 Z`} fill="url(#pp-eq)" />
-                  <path d={eqPath} fill="none" stroke="var(--profit)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-                </svg>
-                <div className="pp-win-trades">
-                  <div className="pp-win-trow">
-                    <span className="pp-win-pair">EUR/USD</span>
-                    <span className="pp-up">Long</span>
-                    <span className="pp-mono pp-pos">+$245</span>
-                    <span className="pp-mono pp-win-r">+2.0R</span>
+                <div className="pp-voice-trans">
+                  <div className="overline" style={{ color: "var(--fg-3)" }}>
+                    AI transcribing…
                   </div>
-                  <div className="pp-win-trow">
-                    <span className="pp-win-pair">XAU/USD</span>
-                    <span className="pp-up">Long</span>
-                    <span className="pp-mono pp-pos">+$510</span>
-                    <span className="pp-mono pp-win-r">+3.4R</span>
-                  </div>
-                  <div className="pp-win-trow">
-                    <span className="pp-win-pair">GBP/JPY</span>
-                    <span className="pp-dn">Short</span>
-                    <span className="pp-mono pp-neg">−$120</span>
-                    <span className="pp-mono pp-win-r">−1.0R</span>
-                  </div>
+                  <p>
+                    &ldquo;Took the EUR/USD long off the London open — clean break, waited for the retest like the plan
+                    said. <span className="pp-voice-hl">Felt calm, sized right, R was two.</span> Closed at target, no FOMO
+                    this time.&rdquo;
+                  </p>
+                </div>
+                <div className="pp-voice-tags">
+                  <span className="pp-voice-chip">
+                    <Icon name="trending-up" size={13} /> EUR/USD · Long
+                  </span>
+                  <span className="pp-voice-chip pp-pos">+2.0R</span>
                 </div>
               </div>
             </div>
 
-            {/* Floating: trade logged */}
+            {/* Floating: note transcribed */}
             <div className="pp-float pp-float-a">
               <div className="pp-float-ic pp-float-ic-up">
-                <Icon name="trending-up" size={16} />
+                <Icon name="sparkles" size={15} />
               </div>
               <div>
-                <div className="pp-float-t">EUR/USD · Long</div>
-                <div className="pp-float-s">
-                  <span className="pp-pos pp-mono">+$245</span> · +2.0R logged
-                </div>
+                <div className="pp-float-t">Note transcribed</div>
+                <div className="pp-float-s">Idea, emotion &amp; execution captured</div>
               </div>
             </div>
 
@@ -153,7 +117,7 @@ export default function LandingPage() {
               Inside TradeNotti
             </span>
             <h2>Everything you need to capture, organize, and review.</h2>
-            <p>A clean workspace built around the way traders actually work — not another spreadsheet to maintain.</p>
+            <p>A clean workspace built around the way traders actually work.</p>
             <div style={{ marginTop: 24 }}>
               <Link href="/signup" className="oa-btn oa-btn-accent oa-btn-md">
                 Get started <Icon name="arrow-right" size={16} />
@@ -161,36 +125,31 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* 1 — Journal three ways */}
+          {/* 1 — Journal */}
           <div className="pp-show-row">
             <div className="pp-show-copy">
-              <span className="pp-show-tag">
-                <Icon name="notebook-pen" size={14} /> Journal
+              <span className="pp-kicker">
+                <span className="pp-kicker-num">01</span>
+                <span className="pp-kicker-rule" />
+                <span className="pp-kicker-label">Journal</span>
               </span>
-              <h3>Three ways to journal — all in seconds.</h3>
+              <h3>Journal every trade — in seconds.</h3>
               <p>
-                Log a live <b>trade</b>, a <b>missed trade</b> you should have taken, or a <b>backtest</b> of a setup
-                you&apos;re building. Drop chart screenshots, tag the pair, grade the idea, and add notes — without the
-                twenty-field forms other tools force on you.
+                Log a live <b>trade</b> the moment you close it. Drop your chart screenshots, tag the pair, grade the
+                idea, and add notes — all in seconds.
               </p>
-              <ul className="pp-show-list">
-                <li>
-                  <Icon name="check" size={15} /> Before &amp; after screenshots on every trade
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Tags, grade, and free-form notes
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Missed trades &amp; backtests, not just fills
-                </li>
+              <ul className="pp-spec">
+                <li>Before &amp; after screenshots on every trade</li>
+                <li>Tags, grade, and free-form notes</li>
+                <li>Capture the setup, emotion &amp; execution</li>
               </ul>
             </div>
             <div className="pp-show-visual">
               <div className="pp-mini-card">
                 <div className="pp-mini-tabs">
                   <span className="on">Trades</span>
-                  <span>Missed</span>
-                  <span>Backtests</span>
+                  <span>Open</span>
+                  <span>Closed</span>
                 </div>
                 <div className="pp-mini-rows">
                   <div className="pp-mini-trow">
@@ -219,8 +178,10 @@ export default function LandingPage() {
           {/* 2 — Auto-capture / MT5 sync */}
           <div className="pp-show-row reverse">
             <div className="pp-show-copy">
-              <span className="pp-show-tag">
-                <Icon name="refresh-cw" size={14} /> Auto-capture
+              <span className="pp-kicker">
+                <span className="pp-kicker-num">02</span>
+                <span className="pp-kicker-rule" />
+                <span className="pp-kicker-label">Auto-capture</span>
               </span>
               <h3>The numbers fill themselves in.</h3>
               <p>
@@ -228,16 +189,10 @@ export default function LandingPage() {
                 <b>MT4 / MT5</b> — so you only journal the part that makes you better: the thinking. Your read on the
                 market, the grade, the stop in pips, the phase you saw.
               </p>
-              <ul className="pp-show-list">
-                <li>
-                  <Icon name="check" size={15} /> Entry, exit, size &amp; ROI synced automatically
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> You add the judgment — grade, direction, notes
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> No more copy-pasting from your broker
-                </li>
+              <ul className="pp-spec">
+                <li>Entry, exit, size &amp; ROI synced automatically</li>
+                <li>You add the judgment — grade, direction, notes</li>
+                <li>No more copy-pasting from your broker</li>
               </ul>
             </div>
             <div className="pp-show-visual">
@@ -288,8 +243,10 @@ export default function LandingPage() {
           {/* 3 — Customizable Notebook */}
           <div className="pp-show-row">
             <div className="pp-show-copy">
-              <span className="pp-show-tag">
-                <Icon name="calendar" size={14} /> Notebook
+              <span className="pp-kicker">
+                <span className="pp-kicker-num">03</span>
+                <span className="pp-kicker-rule" />
+                <span className="pp-kicker-label">Notebook</span>
               </span>
               <h3>A calendar that&apos;s blank until you make it yours.</h3>
               <p>
@@ -297,16 +254,10 @@ export default function LandingPage() {
                 daily breakdowns, weekly reviews, projections, recaps. Build a template once, save it, and reuse it
                 forever.
               </p>
-              <ul className="pp-show-list">
-                <li>
-                  <Icon name="check" size={15} /> Fully customizable pages &amp; templates
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Save any page as a reusable template
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Green &amp; red days at a glance
-                </li>
+              <ul className="pp-spec">
+                <li>Fully customizable pages &amp; templates</li>
+                <li>Save any page as a reusable template</li>
+                <li>Green &amp; red days at a glance</li>
               </ul>
             </div>
             <div className="pp-show-visual">
@@ -332,8 +283,10 @@ export default function LandingPage() {
           {/* 4 — Analytics & filtering */}
           <div className="pp-show-row reverse">
             <div className="pp-show-copy">
-              <span className="pp-show-tag">
-                <Icon name="layout-dashboard" size={14} /> Review
+              <span className="pp-kicker">
+                <span className="pp-kicker-num">04</span>
+                <span className="pp-kicker-rule" />
+                <span className="pp-kicker-label">Review</span>
               </span>
               <h3>See what&apos;s working — in plain numbers.</h3>
               <p>
@@ -341,16 +294,10 @@ export default function LandingPage() {
                 <b>filter for anything</b> — date, direction, outcome, grade, pair, tags, or R multiple — to find exactly
                 where your edge lives.
               </p>
-              <ul className="pp-show-list">
-                <li>
-                  <Icon name="check" size={15} /> Performance by week, month &amp; quarter
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Stack filters across every property
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Win / loss breakdown on every view
-                </li>
+              <ul className="pp-spec">
+                <li>Performance by week, month &amp; quarter</li>
+                <li>Stack filters across every property</li>
+                <li>Win / loss breakdown on every view</li>
               </ul>
             </div>
             <div className="pp-show-visual">
