@@ -148,8 +148,8 @@ export default function LandingPage() {
               <div className="pp-mini-card">
                 <div className="pp-mini-tabs">
                   <span className="on">Trades</span>
-                  <span>Open</span>
-                  <span>Closed</span>
+                  <span>Long</span>
+                  <span>Short</span>
                 </div>
                 <div className="pp-mini-rows">
                   <div className="pp-mini-trow">
