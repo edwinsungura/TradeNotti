@@ -1564,15 +1564,15 @@ body { background: var(--bg-1); color: var(--fg-1); }
 .pp-utilbar .pp-brand-word { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; color: var(--ink); }
 
 .pp-utilbar .pp-right { display: flex; align-items: center; gap: 4px; font-size: 13px; }
-.pp-utilbar .pp-right a {
+.pp-utilbar .pp-right a:not(.oa-btn) {
   color: var(--fg-2); opacity: 1; border: 0; cursor: pointer;
   font-weight: 500; padding: 8px 12px; border-radius: var(--r-sm);
   transition: color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
 }
-.pp-utilbar .pp-right a:hover { color: var(--ink); background: var(--paper-sunken); }
+.pp-utilbar .pp-right a:not(.oa-btn):hover { color: var(--ink); background: var(--paper-sunken); }
 .pp-utilbar .pp-right > .oa-btn { margin-left: 8px; }
-[data-theme="dark"] .pp-utilbar .pp-right a { opacity: 0.7; }
-[data-theme="dark"] .pp-utilbar .pp-right a:hover { opacity: 1; color: var(--paper); background: rgba(255,255,255,0.08); }
+[data-theme="dark"] .pp-utilbar .pp-right a:not(.oa-btn) { opacity: 0.7; }
+[data-theme="dark"] .pp-utilbar .pp-right a:not(.oa-btn):hover { opacity: 1; color: var(--paper); background: rgba(255,255,255,0.08); }
 
 /* Demo banner — pinned bottom-left so you know it's a prototype */
 .pp-demo-banner {
@@ -2243,15 +2243,15 @@ body { background: var(--bg-1); color: var(--fg-1); }
 .pp-utilbar .pp-brand-word { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 0.04em; color: var(--ink); }
 
 .pp-utilbar .pp-right { display: flex; align-items: center; gap: 4px; font-size: 13px; }
-.pp-utilbar .pp-right a {
+.pp-utilbar .pp-right a:not(.oa-btn) {
   color: var(--fg-2); opacity: 1; border: 0; cursor: pointer;
   font-weight: 500; padding: 8px 12px; border-radius: var(--r-sm);
   transition: color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
 }
-.pp-utilbar .pp-right a:hover { color: var(--ink); background: var(--paper-sunken); }
+.pp-utilbar .pp-right a:not(.oa-btn):hover { color: var(--ink); background: var(--paper-sunken); }
 .pp-utilbar .pp-right > .oa-btn { margin-left: 8px; }
-[data-theme="dark"] .pp-utilbar .pp-right a { opacity: 0.7; }
-[data-theme="dark"] .pp-utilbar .pp-right a:hover { opacity: 1; color: var(--paper); background: rgba(255,255,255,0.08); }
+[data-theme="dark"] .pp-utilbar .pp-right a:not(.oa-btn) { opacity: 0.7; }
+[data-theme="dark"] .pp-utilbar .pp-right a:not(.oa-btn):hover { opacity: 1; color: var(--paper); background: rgba(255,255,255,0.08); }
 
 /* Demo banner — pinned bottom-left so you know it's a prototype */
 .pp-demo-banner {
