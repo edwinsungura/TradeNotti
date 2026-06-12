@@ -21,9 +21,9 @@ export default function LandingPage() {
         <div className="pp-hero">
           <div>
             <h1>
-              Just talk.
+              Voice journal your trades
               <br />
-              We <em>journal it.</em>
+              <em>in seconds.</em>
             </h1>
             <p className="pp-hero-sub">
               Capture trade ideas, emotions, and execution notes in seconds with AI voice journaling. Speak your review,
