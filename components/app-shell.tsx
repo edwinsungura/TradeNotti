@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { useClerk } from "@clerk/nextjs";
 import { Icon, BrandLogo } from "@/components/ui";
 
 export type AccountVM = {
@@ -114,6 +114,7 @@ function AccountSwitcher({ accounts, currentId }: { accounts: AccountVM[]; curre
 
 function ProfileMenu({ user }: { user: ShellUser }) {
   const [open, setOpen] = useState(false);
+  const { signOut } = useClerk();
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -150,7 +151,7 @@ function ProfileMenu({ user }: { user: ShellUser }) {
             </Link>
           </div>
           <div className="oa-profile-section">
-            <button className="oa-profile-item danger" onClick={() => signOut({ callbackUrl: "/" })}>
+            <button className="oa-profile-item danger" onClick={() => signOut({ redirectUrl: "/" })}>
               <Icon name="log-out" size={16} /> <span>Sign out</span>
             </button>
           </div>

@@ -1,22 +1,19 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireUser } from "@/lib/session";
 import { AppShell, type AccountVM } from "@/components/app-shell";
 import { ThemeApplier } from "@/components/theme-applier";
 
 export const dynamic = "force-dynamic";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+  const user = await requireUser();
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: { accounts: { orderBy: { createdAt: "asc" } } },
+  const accountRows = await prisma.account.findMany({
+    where: { userId: user.id },
+    orderBy: { createdAt: "asc" },
   });
-  if (!user) redirect("/login");
 
-  const accounts: AccountVM[] = user.accounts.map((a) => ({
+  const accounts: AccountVM[] = accountRows.map((a) => ({
     id: a.id,
     name: a.name,
     broker: a.broker,
