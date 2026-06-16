@@ -40,7 +40,9 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
         await signUp.create({
           emailAddress: email,
           password,
-          unsafeMetadata: username ? { username } : undefined,
+          // Clerk enforces username uniqueness instance-wide and rejects
+          // duplicates here with a "username is taken" error.
+          ...(username ? { username } : {}),
         });
         await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
         setPendingCode(true);
@@ -177,8 +179,8 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
                 <div className="pp-auth-divider">or with email</div>
 
                 {isSignup && (
-                  <Field label="Username">
-                    <Input name="name" type="text" placeholder="yourname" autoComplete="username" />
+                  <Field label="Username" hint="Must be unique">
+                    <Input name="name" type="text" required placeholder="yourname" autoComplete="username" />
                   </Field>
                 )}
                 <Field label="Email">
