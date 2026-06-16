@@ -1,10 +1,8 @@
 import { PrismaClient, AssetClass, Direction, TradeStatus } from "@prisma/client";
-import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 const DEMO_EMAIL = "edwin@tradenotti.app";
-const DEMO_PASSWORD = "tradenotti";
 
 function daysAgo(n: number, hour = 9, min = 30) {
   const d = new Date();
@@ -20,12 +18,10 @@ async function main() {
   const existing = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });
   if (existing) await prisma.user.delete({ where: { id: existing.id } });
 
-  const hashedPassword = await bcrypt.hash(DEMO_PASSWORD, 12);
   const user = await prisma.user.create({
     data: {
       email: DEMO_EMAIL,
       name: "Edwin",
-      hashedPassword,
       tradingFocus: "forex",
       watchlist: ["EUR/USD", "GBP/JPY", "XAU/USD", "BTC/USD"],
       onboardedAt: new Date(),
@@ -154,7 +150,7 @@ async function main() {
     },
   });
 
-  console.log(`Seeded demo user ${DEMO_EMAIL} (password: ${DEMO_PASSWORD})`);
+  console.log(`Seeded demo user ${DEMO_EMAIL} (sign in via Clerk with this email to link it)`);
 }
 
 main()
