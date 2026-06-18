@@ -370,73 +370,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* PRICING (Referred? line intentionally omitted) */}
-        <section className="pp-pricing" id="pricing">
-          <div className="pp-section-head" style={{ textAlign: "center", margin: "0 auto 48px" }}>
-            <span className="overline" style={{ display: "block", marginBottom: 12, color: "var(--gold-deep)" }}>
-              Pricing
-            </span>
-            <h2>One simple plan. Everything included.</h2>
-            <p style={{ margin: "14px auto 0" }}>
-              No tiers to decode, no per-account fees. Less than a third of what other serious journals charge.
-            </p>
-          </div>
-          <div className="pp-plans">
-            <div className="pp-plan-card">
-              <div className="pp-plan-name">Free trial</div>
-              <div className="pp-plan-price">
-                <span className="pp-plan-cur">$</span>0
-              </div>
-              <div className="pp-plan-sub">14 days · no card required</div>
-              <ul className="pp-plan-feats">
-                <li>
-                  <Icon name="check" size={15} /> Full access to every Pro feature
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Journal trades, missed trades &amp; backtests
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> No commitment — cancel anytime
-                </li>
-              </ul>
-              <Link href="/signup" className="oa-btn oa-btn-secondary oa-btn-md" style={{ width: "100%", justifyContent: "center" }}>
-                Start free trial
-              </Link>
-            </div>
-
-            <div className="pp-plan-card featured">
-              <div className="pp-plan-badge">Best value</div>
-              <div className="pp-plan-name">Pro</div>
-              <div className="pp-plan-price">
-                <span className="pp-plan-cur">$</span>9.99<span className="pp-plan-per">/mo</span>
-              </div>
-              <div className="pp-plan-sub">Billed monthly · cancel anytime</div>
-              <ul className="pp-plan-feats">
-                <li>
-                  <Icon name="check" size={15} /> Unlimited trades, missed trades &amp; backtests
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Auto-capture from MT4 / MT5
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Customizable Notebook &amp; templates
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Performance analytics &amp; multi-filter review
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Multiple accounts under one profile
-                </li>
-                <li>
-                  <Icon name="check" size={15} /> Accountability partners
-                </li>
-              </ul>
-              <Link href="/signup" className="oa-btn oa-btn-accent oa-btn-md" style={{ width: "100%", justifyContent: "center" }}>
-                Get started <Icon name="arrow-right" size={16} />
-              </Link>
-            </div>
-          </div>
-        </section>
+        {/* PRICING — temporarily removed; will return in a modified form */}
 
         {/* DIRECT CTA */}
         <section className="pp-cta-section">
