@@ -387,7 +387,6 @@ export default function LandingPage() {
 
         <div className="pp-foot">
           <span>© 2026 TradeNotti</span>
-          <span>Trading journaling &amp; reviewing made simple.</span>
         </div>
       </div>
     </div>
