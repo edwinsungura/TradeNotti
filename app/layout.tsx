@@ -24,14 +24,14 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TradeNotti — Your Voice Trading Journal & Daily AI Insight",
+  title: "TradeNotti",
   description:
-    "TradeNotti is your voice trading journal — capture every trade and the reasoning behind it, then get a daily AI insight to sharpen your edge. Built for forex & crypto traders.",
+    "A clean trading journal for forex & crypto traders — capture, organize, and review every trade.",
   applicationName: "TradeNotti",
   openGraph: {
-    title: "TradeNotti — Voice Trading Journal & AI Insight",
+    title: "TradeNotti",
     description:
-      "Capture every trade and the reasoning behind it, then get a daily AI insight to sharpen your edge. Built for forex & crypto traders.",
+      "A clean trading journal for forex & crypto traders — capture, organize, and review every trade.",
     siteName: "TradeNotti",
     type: "website",
   },
