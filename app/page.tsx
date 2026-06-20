@@ -7,11 +7,11 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "TradeNotti — Voice-journal your trades · Join the waitlist",
   description:
-    "Speak your review, drop in your charts, and TradeNotti transcribes, tags, and files every trade — in seconds. Join the waitlist to lock 50% off the yearly plan.",
+    "Speak your trade review out loud and TradeNotti transcribes it into a clean, written note — in seconds. Join the waitlist to lock 50% off the yearly plan.",
   openGraph: {
     title: "TradeNotti — Voice-journal your trades",
     description:
-      "Join the waitlist. Speak your review and TradeNotti transcribes it into a clean, structured trade note — in seconds.",
+      "Join the waitlist. Speak your review and TradeNotti transcribes it into a clean, written note — in seconds.",
     siteName: "TradeNotti",
     type: "website",
   },

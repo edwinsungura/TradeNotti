@@ -1,5 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest, type NextFetchEvent } from "next/server";
 
 // Authenticated app surfaces. Everything else (landing, /login, /signup,
 // /forgot-password, /sso-callback, static assets) stays public.
@@ -35,7 +35,12 @@ const WAITLIST_MODE = ["1", "true", "on"].includes(
   (process.env.WAITLIST_MODE ?? "").toLowerCase(),
 );
 
-export default clerkMiddleware(async (auth, req) => {
+// Clerk is optional: when no publishable key is configured (e.g. preview
+// deploys without Clerk env), skip Clerk entirely so requests don't 500 on the
+// missing key. Production sets the key, so the full auth middleware runs.
+const CLERK_ENABLED = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
+const withClerk = clerkMiddleware(async (auth, req) => {
   const host = req.headers.get("host")?.toLowerCase().split(":")[0] ?? "";
   const url = req.nextUrl;
 
@@ -77,6 +82,18 @@ export default clerkMiddleware(async (auth, req) => {
     await auth.protect();
   }
 });
+
+export default function middleware(req: NextRequest, ev: NextFetchEvent) {
+  // No Clerk configured (preview/dev): honor WAITLIST_MODE gating but never
+  // touch Clerk, which would otherwise throw on the missing key.
+  if (!CLERK_ENABLED) {
+    if (WAITLIST_MODE && (isProtected(req) || isAuthRoute(req))) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+    return NextResponse.next();
+  }
+  return withClerk(req, ev);
+}
 
 export const config = {
   matcher: [
