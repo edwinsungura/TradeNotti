@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { subscribeToEmailList } from "@/lib/email-list";
 
 /**
  * Waitlist domain logic — referral codes, live counts, and "position in line".
@@ -8,20 +9,20 @@ import { prisma } from "@/lib/prisma";
  * This keeps every position correct after any referral without a backfill job.
  */
 
-// A visible head-start so the line never reads "1 in line" on launch day.
-// Override per-environment with NEXT_PUBLIC_WAITLIST_BASE_COUNT.
+// Real-by-default: the public count is the actual number of signups. Set
+// NEXT_PUBLIC_WAITLIST_BASE_COUNT to add a visible head-start if ever wanted.
 export const WAITLIST_BASE_COUNT = Number(
-  process.env.NEXT_PUBLIC_WAITLIST_BASE_COUNT ?? 4479,
+  process.env.NEXT_PUBLIC_WAITLIST_BASE_COUNT ?? 0,
 );
 
-// When the next cohort opens. Drive the countdown + "launch date" copy.
-// ISO 8601, e.g. "2026-08-04T13:00:00Z". Falls back to ~45 days out.
+// When the next cohort opens. Override with NEXT_PUBLIC_LAUNCH_DATE (ISO 8601);
+// falls back to the confirmed launch date so production is correct even if the
+// env var is missing.
+const DEFAULT_LAUNCH = "2026-08-01T13:00:00Z";
 export function launchDateISO(): string {
   const fromEnv = process.env.NEXT_PUBLIC_LAUNCH_DATE;
   if (fromEnv && !Number.isNaN(Date.parse(fromEnv))) return fromEnv;
-  const d = new Date();
-  d.setUTCDate(d.getUTCDate() + 45);
-  return d.toISOString();
+  return DEFAULT_LAUNCH;
 }
 
 const REF_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous 0/O/1/I
@@ -133,6 +134,15 @@ export async function joinWaitlist(input: {
       data: { referrals: { increment: 1 } },
     });
   }
+
+  // Sync to the configured email provider (no-op if none configured). Never
+  // let a provider hiccup fail the signup — the row is already saved.
+  await subscribeToEmailList({
+    email: created.email,
+    refCode: created.refCode,
+    referredBy: created.referredBy,
+    source: created.source,
+  });
 
   return {
     email: created.email,

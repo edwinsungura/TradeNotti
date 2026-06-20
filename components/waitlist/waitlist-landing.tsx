@@ -25,17 +25,28 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<JoinResult | null>(null);
 
-  // Refresh the live count on mount (covers the SSR-fallback case).
+  // Keep the count live: refresh on mount, every 15s, and whenever the tab
+  // regains focus — so the "traders in line" number is real-time.
   useEffect(() => {
     let on = true;
-    fetch("/api/waitlist/stats")
-      .then((r) => r.json())
-      .then((d) => {
-        if (on && typeof d.total === "number") setTotal(d.total);
-      })
-      .catch(() => {});
+    const refresh = () =>
+      fetch("/api/waitlist/stats")
+        .then((r) => r.json())
+        .then((d) => {
+          if (on && typeof d.total === "number") setTotal(d.total);
+        })
+        .catch(() => {});
+
+    refresh();
+    const id = setInterval(refresh, 15000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       on = false;
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, []);
 
