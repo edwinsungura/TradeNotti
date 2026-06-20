@@ -435,7 +435,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
         </span>
         <h2>Claim your waitlist spot.</h2>
         <p>
-          Lock your 50% founding rate — it&apos;s for waitlist members only. Climb the line by
+          Lock your 50% discount — it&apos;s for waitlist members only. Climb the line by
           inviting traders who get it.
         </p>
         {joined ? (
