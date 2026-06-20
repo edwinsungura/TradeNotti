@@ -223,8 +223,12 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
 
       {/* ===== COUNTDOWN ===== */}
       <section className="wl-countdown">
-        <span className="wl-countdown-label">Waitlist cohort opens in</span>
+        <span className="wl-countdown-label">Waitlist closes in</span>
         <Countdown target={launchDate} />
+        <p className="wl-countdown-note">
+          When the timer hits zero, the waitlist closes — and the{" "}
+          <b>50% founding rate</b> closes with it. No card needed to lock yours now.
+        </p>
       </section>
 
       {/* ===== SNEAK PEEK ===== */}
@@ -232,7 +236,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
         <span className="wl-eyebrow">A sneak peek</span>
         <h2>Here&apos;s what you&apos;re getting in.</h2>
         <p className="wl-line-sub">
-          A first look at the workspace — the full experience unlocks when the waitlist opens.
+          A first look at the workspace — the full experience unlocks the day we launch.
         </p>
 
         <div className="wl-peek-grid">
