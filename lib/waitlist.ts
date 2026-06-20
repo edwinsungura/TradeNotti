@@ -90,6 +90,26 @@ export type JoinResult = {
   alreadyJoined: boolean;
 };
 
+/** Build the public join result for an entry, computing its live position. */
+async function toResult(
+  entry: { email: string; refCode: string; referrals: number; createdAt: Date },
+  alreadyJoined: boolean,
+): Promise<JoinResult> {
+  return {
+    email: entry.email,
+    refCode: entry.refCode,
+    position: await positionFor(entry),
+    referrals: entry.referrals,
+    total: await totalInLine(),
+    alreadyJoined,
+  };
+}
+
+/** True for a Prisma unique-constraint violation (P2002). */
+function isUniqueViolation(err: unknown): boolean {
+  return typeof err === "object" && err !== null && (err as { code?: string }).code === "P2002";
+}
+
 /**
  * Idempotent join. Re-submitting the same email returns the existing record
  * (with its current position) rather than erroring or double-counting a
@@ -103,16 +123,7 @@ export async function joinWaitlist(input: {
   const email = normalizeEmail(input.email);
 
   const existing = await prisma.waitlistEntry.findUnique({ where: { email } });
-  if (existing) {
-    return {
-      email: existing.email,
-      refCode: existing.refCode,
-      position: await positionFor(existing),
-      referrals: existing.referrals,
-      total: await totalInLine(),
-      alreadyJoined: true,
-    };
-  }
+  if (existing) return toResult(existing, true);
 
   // Resolve the inviter (if any) — can't refer yourself, code must exist.
   let referredBy: string | null = null;
@@ -123,9 +134,21 @@ export async function joinWaitlist(input: {
   }
 
   const refCode = await uniqueRefCode();
-  const created = await prisma.waitlistEntry.create({
-    data: { email, refCode, referredBy, source: input.source ?? null },
-  });
+  let created;
+  try {
+    created = await prisma.waitlistEntry.create({
+      data: { email, refCode, referredBy, source: input.source ?? null },
+    });
+  } catch (err) {
+    // Concurrent double-submit of the same email: another request inserted the
+    // row between our findUnique and create. Return the existing spot instead
+    // of surfacing an error (and without crediting the inviter twice).
+    if (isUniqueViolation(err)) {
+      const raced = await prisma.waitlistEntry.findUnique({ where: { email } });
+      if (raced) return toResult(raced, true);
+    }
+    throw err;
+  }
 
   // Credit the inviter — moves them up the line.
   if (referredBy) {
@@ -144,14 +167,7 @@ export async function joinWaitlist(input: {
     source: created.source,
   });
 
-  return {
-    email: created.email,
-    refCode: created.refCode,
-    position: await positionFor(created),
-    referrals: created.referrals,
-    total: await totalInLine(),
-    alreadyJoined: false,
-  };
+  return toResult(created, false);
 }
 
 /** Mask an email for public-facing status views (the ref code is shareable). */
