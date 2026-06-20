@@ -158,8 +158,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
               <div className="wl-perk">
                 <Icon name="badge-percent" size={16} />
                 <span>
-                  Join now to lock <b>50% off the yearly plan</b> — waitlist only, gone the day we
-                  launch.
+                  Join now to lock <b>50% off the yearly plan</b> — waitlist only.
                 </span>
               </div>
               <JoinForm onJoin={join} status={status} error={error} />
@@ -274,8 +273,8 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
         <span className="wl-countdown-label">Waitlist closes in</span>
         <Countdown target={launchDate} />
         <p className="wl-countdown-note">
-          When the timer hits zero, the waitlist closes — and the{" "}
-          <b>50% founding rate</b> closes with it. No card needed to lock yours now.
+          When the timer hits zero, the waitlist closes — claim your spot before it does. No card
+          needed.
         </p>
       </section>
 
@@ -431,13 +430,13 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
       {/* ===== FINAL CTA ===== */}
       <section className="wl-final">
         <span className="wl-final-eyebrow">
-          <span className="wl-final-rule" /> 50% off — only until launch day{" "}
+          <span className="wl-final-rule" /> Get 50% off on a yearly plan{" "}
           <span className="wl-final-rule" />
         </span>
         <h2>Claim your waitlist spot.</h2>
         <p>
-          Lock your 50% founding rate before launch day — it&apos;s for waitlist members only and
-          disappears when we go live. Climb the line by inviting traders who get it.
+          Lock your 50% founding rate — it&apos;s for waitlist members only. Climb the line by
+          inviting traders who get it.
         </p>
         {joined ? (
           <SuccessPanel result={result!} compact />
