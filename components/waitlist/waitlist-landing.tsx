@@ -100,8 +100,8 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
             <span className="wl-accent">Join the waitlist.</span>
           </h1>
           <p className="wl-lead">
-            Speak your review, drop in your charts, and TradeNotti transcribes, tags, and files
-            every trade — in seconds.
+            Speak your trade review out loud and TradeNotti transcribes it into a clean,
+            written note — in seconds.
           </p>
 
           {joined ? (
@@ -250,8 +250,8 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
             </div>
             <h3>Voice journal</h3>
             <p>
-              Speak your review out loud and TradeNotti transcribes it into a clean, structured
-              trade note — in seconds.
+              Speak your review out loud and TradeNotti transcribes it into a clean, written
+              note — in seconds.
             </p>
             <div className="wl-peek-foot">
               <div className="wl-voice-rec compact">
