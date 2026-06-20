@@ -3089,7 +3089,7 @@ body { background: var(--bg-1); color: var(--fg-1); }
 .wl-acc-grid { max-width: var(--wl-max); margin: 56px auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; text-align: left; }
 .wl-acc { position: relative; padding-left: 0; }
 .wl-acc + .wl-acc { border-left: 1px solid var(--ink-line); padding-left: 40px; }
-.wl-acc-ic { display: inline-flex; width: 46px; height: 46px; align-items: center; justify-content: center; border-radius: 12px; background: rgba(83,71,240,.18); color: var(--gold-soft); }
+.wl-acc-ic { display: inline-flex; width: 46px; height: 46px; align-items: center; justify-content: center; border-radius: 12px; background: rgba(83,71,240,.18); color: var(--gold); }
 .wl-acc h3 { font-size: 20px; margin: 20px 0 8px; color: #fff; }
 .wl-acc p { color: var(--stone-300); font-size: 15px; line-height: 1.6; margin: 0; }
 
