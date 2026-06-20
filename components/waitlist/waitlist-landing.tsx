@@ -12,6 +12,10 @@ type JoinResult = {
   alreadyJoined: boolean;
 };
 
+// Only surface the public "N traders in line" proof once the line is past this
+// many signups, so it never reads as embarrassingly small early on.
+const COUNT_VISIBLE_AT = Number(process.env.NEXT_PUBLIC_WAITLIST_SHOW_COUNT_AT ?? 50);
+
 type Props = {
   initialTotal: number;
   launchDate: string;
@@ -172,18 +176,20 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
         </div>
       </section>
 
-      {/* ===== SOCIAL PROOF ===== */}
-      <section className="wl-proof">
-        <div className="wl-proof-avatars">
-          <span style={{ background: "#0B0C10" }}>AM</span>
-          <span style={{ background: "#3D31CE" }}>JC</span>
-          <span style={{ background: "#15966A" }}>RK</span>
-          <span className="wl-proof-more">+</span>
-        </div>
-        <span className="wl-proof-count">
-          <b>{total.toLocaleString("en-US")}</b> traders are already in line
-        </span>
-      </section>
+      {/* ===== SOCIAL PROOF (only once the line crosses the threshold) ===== */}
+      {total >= COUNT_VISIBLE_AT && (
+        <section className="wl-proof">
+          <div className="wl-proof-avatars">
+            <span style={{ background: "#0B0C10" }}>AM</span>
+            <span style={{ background: "#3D31CE" }}>JC</span>
+            <span style={{ background: "#15966A" }}>RK</span>
+            <span className="wl-proof-more">+</span>
+          </div>
+          <span className="wl-proof-count">
+            <b>{total.toLocaleString("en-US")}</b> traders are already in line
+          </span>
+        </section>
+      )}
 
       {/* ===== HOW THE LINE WORKS ===== */}
       <section className="wl-line">
