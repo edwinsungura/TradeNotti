@@ -1,17 +1,22 @@
-// Run `prisma migrate deploy` only when a database is actually configured.
+// Run `prisma migrate deploy` only for real (production) deployments.
 //
 // The Vercel build runs this between `prisma generate` and `next build`.
-// Preview deployments have no DATABASE_URL, so attempting to migrate there
-// fails the whole build (Prisma P1012) — and we wouldn't *want* a preview of
-// an unmerged branch migrating the production database anyway. So: migrate
-// when DATABASE_URL is present (production), skip cleanly when it isn't.
+//   - Preview deploys: never migrate. They shouldn't mutate any database (and
+//     definitely not production, from an unmerged branch), and a missing/broken
+//     preview DATABASE_URL must not fail the build. Always skip.
+//   - Production deploys: migrate when DATABASE_URL is set, and fail loudly if
+//     the migration itself fails — we don't want to ship against an unmigrated
+//     schema.
+//   - Anywhere else (local `vercel-build`, etc.): migrate iff DATABASE_URL is set.
 import { execSync } from "node:child_process";
 
-if (process.env.DATABASE_URL) {
+const isPreview = process.env.VERCEL_ENV === "preview";
+
+if (isPreview) {
+  console.log("Preview build — skipping `prisma migrate deploy` (previews never migrate).");
+} else if (process.env.DATABASE_URL) {
   console.log("DATABASE_URL set — running `prisma migrate deploy`…");
   execSync("prisma migrate deploy", { stdio: "inherit" });
 } else {
-  console.log(
-    "DATABASE_URL not set — skipping `prisma migrate deploy` (e.g. a preview build with no database).",
-  );
+  console.log("DATABASE_URL not set — skipping `prisma migrate deploy`.");
 }
