@@ -3121,15 +3121,31 @@ body { background: var(--bg-1); color: var(--fg-1); }
 
 /* Responsive */
 @media (max-width: 880px) {
+  .wl section { padding-inline: 20px; }
+  .wl-nav { padding: 20px; }
   .wl-hero { grid-template-columns: 1fr; gap: 40px; padding-block: 24px 56px; }
+  .wl-lead, .wl-form { max-width: none; }
   .wl-steps, .wl-peek-grid, .wl-acc-grid { grid-template-columns: 1fr; }
   .wl-acc + .wl-acc { border-left: none; padding-left: 0; }
+  .wl-line, .wl-peek, .wl-accountable, .wl-final { padding-block: 64px; }
   .wl-clock { flex-wrap: wrap; }
   .wl-unit { width: 132px; }
   .wl-testimonial { margin-left: 0; }
 }
 @media (max-width: 480px) {
-  .wl-form-row { flex-direction: column; }
-  .wl-submit { width: 100%; justify-content: center; }
-  .wl-unit { width: 44%; flex: 1 1 40%; }
+  .wl-hero-copy h1 { font-size: clamp(32px, 9vw, 40px); }
+  .wl-lead { font-size: 16px; }
+  /* Email signup: keep it full-width and comfortably tappable on phones — same
+     presence as desktop, never cramped. 16px input text also stops iOS from
+     auto-zooming the page on focus. */
+  .wl-form-row { flex-direction: column; gap: 12px; }
+  .wl-input { height: 54px; font-size: 16px; }
+  .wl-submit { width: 100%; height: 54px; justify-content: center; font-size: 16px; }
+  /* Countdown: two readable units per row. */
+  .wl-clock { gap: 12px; }
+  .wl-unit { width: calc(50% - 6px); padding: 18px 0; }
+  .wl-unit-num { font-size: 40px; }
+  /* Success panel: stack the share row so the copy button isn't cramped. */
+  .wl-share-row { flex-direction: column; }
+  .wl-foot { flex-direction: column; gap: 12px; text-align: center; }
 }

@@ -393,7 +393,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
         ) : (
           <>
             <JoinForm onJoin={join} status={status} error={error} />
-            <p className="wl-final-note">No card required · cancel anytime · works with every broker</p>
+            <p className="wl-final-note">No card required</p>
           </>
         )}
       </section>
