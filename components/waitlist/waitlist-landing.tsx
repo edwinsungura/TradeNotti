@@ -158,7 +158,8 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
               <div className="wl-perk">
                 <Icon name="badge-percent" size={16} />
                 <span>
-                  Join now to lock <b>50% off the yearly plan</b> — waitlist only.
+                  Join now to lock <b>50% off the yearly plan</b> — waitlist only, gone the day we
+                  launch.
                 </span>
               </div>
               <JoinForm onJoin={join} status={status} error={error} />
@@ -417,7 +418,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
           <AccItem
             icon="users"
             title="Accountability partners"
-            body="Share an account with a trading partner to keep each other honest — reviews, rules, and results in the open."
+            body="Share an account with a trading partner to keep each other honest — your stats out in the open."
           />
           <AccItem
             icon="sparkles"
@@ -430,11 +431,14 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
       {/* ===== FINAL CTA ===== */}
       <section className="wl-final">
         <span className="wl-final-eyebrow">
-          <span className="wl-final-rule" /> Get 50% off on a yearly plan{" "}
+          <span className="wl-final-rule" /> 50% off — only until launch day{" "}
           <span className="wl-final-rule" />
         </span>
         <h2>Claim your waitlist spot.</h2>
-        <p>Be first in line, lock your waitlist rate, and climb by inviting traders who get it.</p>
+        <p>
+          Lock your 50% founding rate before launch day — it&apos;s for waitlist members only and
+          disappears when we go live. Climb the line by inviting traders who get it.
+        </p>
         {joined ? (
           <SuccessPanel result={result!} compact />
         ) : (
