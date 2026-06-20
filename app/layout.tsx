@@ -51,8 +51,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Preview deployments don't have NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY set, which
+  // makes `next build` fail while prerendering (Clerk requires a key). On Vercel
+  // *preview* builds only, fall back to a dummy test key so the build succeeds —
+  // auth is sealed behind WAITLIST_MODE there anyway. Production is untouched:
+  // ClerkProvider reads the real NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY as usual, and
+  // still fails loudly if it's genuinely missing.
+  const previewFallbackKey =
+    !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && process.env.VERCEL_ENV === "preview"
+      ? "pk_test_Y2xlcmsuZXhhbXBsZS5jb20k"
+      : undefined;
+
   return (
     <ClerkProvider
+      publishableKey={previewFallbackKey}
       appearance={{ variables: { colorPrimary: "#5347F0" } }}
       signInUrl="/login"
       signUpUrl="/signup"
