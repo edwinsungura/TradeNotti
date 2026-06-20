@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon, BrandLogo } from "@/components/ui";
+import { SuccessPanel } from "./success-panel";
 
 type JoinResult = {
   email: string;
@@ -11,6 +12,10 @@ type JoinResult = {
   total: number;
   alreadyJoined: boolean;
 };
+
+// Remember the member on this device so a return visit shows their spot without
+// re-typing their email.
+const SAVED_KEY = "tn_waitlist_ref";
 
 // Only surface the public "N traders in line" proof once the line is past this
 // many signups, so it never reads as embarrassingly small early on.
@@ -54,6 +59,42 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
     };
   }, []);
 
+  // Returning visitor: if we saved their ref code on this device, restore their
+  // current spot straight away (skipping the form). Drop the saved code if the
+  // entry no longer exists.
+  useEffect(() => {
+    let on = true;
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem(SAVED_KEY);
+    } catch {
+      /* storage blocked — nothing to restore */
+    }
+    if (!saved) return;
+    fetch(`/api/waitlist/position?ref=${encodeURIComponent(saved)}`)
+      .then((r) => {
+        if (r.status === 404) {
+          try {
+            localStorage.removeItem(SAVED_KEY);
+          } catch {
+            /* ignore */
+          }
+          return null;
+        }
+        return r.ok ? r.json() : null;
+      })
+      .then((d) => {
+        if (on && d && d.ok) {
+          setResult(d as JoinResult);
+          setStatus("joined");
+        }
+      })
+      .catch(() => {});
+    return () => {
+      on = false;
+    };
+  }, []);
+
   const join = useCallback(
     async (email: string) => {
       setStatus("loading");
@@ -73,6 +114,12 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
         setResult(data as JoinResult);
         setTotal(data.total ?? total);
         setStatus("joined");
+        // Remember them on this device so a return visit restores their spot.
+        try {
+          if (data.refCode) localStorage.setItem(SAVED_KEY, data.refCode);
+        } catch {
+          /* storage blocked — they can still use their status link */
+        }
         // Surface the success state at the top of the viewport.
         window.scrollTo({ top: 0, behavior: "smooth" });
       } catch {
@@ -105,7 +152,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
           </p>
 
           {joined ? (
-            <SuccessPanel result={result!} />
+            <SuccessPanel result={result!} showStatus />
           ) : (
             <>
               <div className="wl-perk">
@@ -457,62 +504,6 @@ function JoinForm({
       </div>
       {error && <p className="wl-error">{error}</p>}
     </form>
-  );
-}
-
-function SuccessPanel({ result, compact = false }: { result: JoinResult; compact?: boolean }) {
-  const [copied, setCopied] = useState(false);
-  const shareUrl = useMemo(() => {
-    if (typeof window === "undefined") return `/?ref=${result.refCode}`;
-    return `${window.location.origin}/?ref=${result.refCode}`;
-  }, [result.refCode]);
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* clipboard blocked — link is still selectable below */
-    }
-  };
-
-  return (
-    <div className={`wl-success${compact ? " compact" : ""}`}>
-      <div className="wl-success-head">
-        <span className="wl-success-ic">
-          <Icon name="check" size={18} />
-        </span>
-        <div>
-          <div className="wl-success-title">
-            {result.alreadyJoined ? "You're already in line." : "You're in line!"}
-          </div>
-          <div className="wl-success-sub">{result.email}</div>
-        </div>
-      </div>
-
-      <div className="wl-success-stats">
-        <div>
-          <div className="wl-success-num">#{result.position.toLocaleString("en-US")}</div>
-          <div className="wl-success-lbl">Your position</div>
-        </div>
-        <div>
-          <div className="wl-success-num">{result.referrals}</div>
-          <div className="wl-success-lbl">Referrals</div>
-        </div>
-      </div>
-
-      <div className="wl-share">
-        <span className="wl-share-label">Share to climb the line</span>
-        <div className="wl-share-row">
-          <input className="wl-input" value={shareUrl} readOnly onFocus={(e) => e.target.select()} />
-          <button type="button" className="wl-submit" onClick={copy}>
-            {copied ? "Copied!" : "Copy link"}
-            {!copied && <Icon name="copy" size={15} />}
-          </button>
-        </div>
-      </div>
-    </div>
   );
 }
 
