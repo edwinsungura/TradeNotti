@@ -1,0 +1,145 @@
+import { prisma } from "@/lib/prisma";
+
+/**
+ * Waitlist domain logic — referral codes, live counts, and "position in line".
+ *
+ * Position is *derived*, never stored: the queue is ordered by referral count
+ * (more referrals = climb the line), then by signup time (earlier = ahead).
+ * This keeps every position correct after any referral without a backfill job.
+ */
+
+// A visible head-start so the line never reads "1 in line" on launch day.
+// Override per-environment with NEXT_PUBLIC_WAITLIST_BASE_COUNT.
+export const WAITLIST_BASE_COUNT = Number(
+  process.env.NEXT_PUBLIC_WAITLIST_BASE_COUNT ?? 4479,
+);
+
+// When the next cohort opens. Drive the countdown + "launch date" copy.
+// ISO 8601, e.g. "2026-08-04T13:00:00Z". Falls back to ~45 days out.
+export function launchDateISO(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_LAUNCH_DATE;
+  if (fromEnv && !Number.isNaN(Date.parse(fromEnv))) return fromEnv;
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + 45);
+  return d.toISOString();
+}
+
+const REF_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous 0/O/1/I
+
+export function generateRefCode(len = 7): string {
+  let out = "";
+  for (let i = 0; i < len; i++) {
+    out += REF_ALPHABET[Math.floor(Math.random() * REF_ALPHABET.length)];
+  }
+  return out;
+}
+
+/** A code unique against the DB (retries on the rare collision). */
+async function uniqueRefCode(): Promise<string> {
+  for (let i = 0; i < 6; i++) {
+    const code = generateRefCode();
+    const clash = await prisma.waitlistEntry.findUnique({ where: { refCode: code } });
+    if (!clash) return code;
+  }
+  // Extremely unlikely; widen the space rather than fail the signup.
+  return generateRefCode(10);
+}
+
+export function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export function isValidEmail(email: string): boolean {
+  return EMAIL_RE.test(email);
+}
+
+/** Total people in line, including the configured head-start. */
+export async function totalInLine(): Promise<number> {
+  const real = await prisma.waitlistEntry.count();
+  return WAITLIST_BASE_COUNT + real;
+}
+
+/**
+ * 1-based position for an entry. We count how many entries rank strictly ahead
+ * of it (more referrals, or equal referrals but signed up earlier) and add the
+ * head-start so positions read consistently with the public total.
+ */
+export async function positionFor(entry: {
+  referrals: number;
+  createdAt: Date;
+}): Promise<number> {
+  const ahead = await prisma.waitlistEntry.count({
+    where: {
+      OR: [
+        { referrals: { gt: entry.referrals } },
+        { referrals: entry.referrals, createdAt: { lt: entry.createdAt } },
+      ],
+    },
+  });
+  return WAITLIST_BASE_COUNT + ahead + 1;
+}
+
+export type JoinResult = {
+  email: string;
+  refCode: string;
+  position: number;
+  referrals: number;
+  total: number;
+  alreadyJoined: boolean;
+};
+
+/**
+ * Idempotent join. Re-submitting the same email returns the existing record
+ * (with its current position) rather than erroring or double-counting a
+ * referral. A referral is only credited the first time an email joins.
+ */
+export async function joinWaitlist(input: {
+  email: string;
+  ref?: string | null;
+  source?: string | null;
+}): Promise<JoinResult> {
+  const email = normalizeEmail(input.email);
+
+  const existing = await prisma.waitlistEntry.findUnique({ where: { email } });
+  if (existing) {
+    return {
+      email: existing.email,
+      refCode: existing.refCode,
+      position: await positionFor(existing),
+      referrals: existing.referrals,
+      total: await totalInLine(),
+      alreadyJoined: true,
+    };
+  }
+
+  // Resolve the inviter (if any) — can't refer yourself, code must exist.
+  let referredBy: string | null = null;
+  const ref = input.ref?.trim().toUpperCase();
+  if (ref) {
+    const inviter = await prisma.waitlistEntry.findUnique({ where: { refCode: ref } });
+    if (inviter && inviter.email !== email) referredBy = inviter.refCode;
+  }
+
+  const refCode = await uniqueRefCode();
+  const created = await prisma.waitlistEntry.create({
+    data: { email, refCode, referredBy, source: input.source ?? null },
+  });
+
+  // Credit the inviter — moves them up the line.
+  if (referredBy) {
+    await prisma.waitlistEntry.update({
+      where: { refCode: referredBy },
+      data: { referrals: { increment: 1 } },
+    });
+  }
+
+  return {
+    email: created.email,
+    refCode: created.refCode,
+    position: await positionFor(created),
+    referrals: created.referrals,
+    total: await totalInLine(),
+    alreadyJoined: false,
+  };
+}

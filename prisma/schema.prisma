@@ -296,3 +296,20 @@ model Insight {
   @@unique([userId, date])
   @@index([userId])
 }
+
+// ---- Pre-launch waitlist ---------------------------------------------------
+// Standalone from the auth/User graph: a waitlist signup is just an email +
+// a shareable referral code. Position in line is derived (not stored): order
+// by referral count, then signup time. See lib/waitlist.ts.
+model WaitlistEntry {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  refCode    String   @unique // this entry's own shareable code
+  referredBy String? // refCode of the entry that referred this one
+  referrals  Int      @default(0) // count of confirmed sign-ups using this code
+  source     String? // optional attribution (utm / campaign)
+  createdAt  DateTime @default(now())
+
+  @@index([referredBy])
+  @@index([referrals, createdAt])
+}
