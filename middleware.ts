@@ -29,9 +29,22 @@ const isAuthRoute = createRouteMatcher([
 const MARKETING_HOST = process.env.NEXT_PUBLIC_MARKETING_HOST?.toLowerCase();
 const APP_HOST = process.env.NEXT_PUBLIC_APP_HOST?.toLowerCase();
 
+// Pre-launch: when on, the app + auth surface is sealed and every door leads
+// back to the waitlist at "/". Flip off on launch day to reopen the app.
+const WAITLIST_MODE = ["1", "true", "on"].includes(
+  (process.env.WAITLIST_MODE ?? "").toLowerCase(),
+);
+
 export default clerkMiddleware(async (auth, req) => {
   const host = req.headers.get("host")?.toLowerCase().split(":")[0] ?? "";
   const url = req.nextUrl;
+
+  // Seal the app while the waitlist is live: app routes and auth pages bounce
+  // to the waitlist. The landing, /preview, and /api stay open.
+  if (WAITLIST_MODE && (isProtected(req) || isAuthRoute(req))) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
   const splitHosts = Boolean(MARKETING_HOST && APP_HOST);
 
   const onMarketing =
