@@ -5,11 +5,11 @@ import { launchDateISO, totalInLine, WAITLIST_BASE_COUNT } from "@/lib/waitlist"
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "TradeNotti — Voice-journal your trades · Join the waitlist",
+  title: "TradeNotti — Your voice trade journal workspace · Join the waitlist",
   description:
-    "Speak your trade review out loud and TradeNotti transcribes it into a clean, written note — in seconds. Join the waitlist to lock 50% off the yearly plan.",
+    "TradeNotti is your voice trade journal workspace: speak your trade review out loud and it transcribes it into a clean, written note — in seconds. Join the waitlist to lock 50% off the yearly plan.",
   openGraph: {
-    title: "TradeNotti — Voice-journal your trades",
+    title: "TradeNotti — Your voice trade journal workspace",
     description:
       "Join the waitlist. Speak your review and TradeNotti transcribes it into a clean, written note — in seconds.",
     siteName: "TradeNotti",
