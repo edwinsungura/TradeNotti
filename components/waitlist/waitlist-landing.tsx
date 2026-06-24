@@ -142,7 +142,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
       <section className="wl-hero">
         <div className="wl-hero-copy">
           <h1>
-            Voice-journal your trades.
+            Your voice trade journal workspace.
             <br />
             <span className="wl-accent">Join the waitlist.</span>
           </h1>
