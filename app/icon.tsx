@@ -1,9 +1,9 @@
 import { ImageResponse } from "next/og";
 
 // Browser tab / favicon. Rendered to a PNG (rather than served as raw SVG)
-// because Safari does not reliably render SVG favicons and falls back to a
-// "T". This guarantees the equity-curve line mark shows in every browser.
-export const size = { width: 64, height: 64 };
+// because Safari does not reliably render SVG favicons. 96px (a multiple of
+// 48) is Google's recommended favicon size for search-result icons.
+export const size = { width: 96, height: 96 };
 export const contentType = "image/png";
 
 const MARK = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
@@ -20,8 +20,7 @@ export default function Icon() {
   return new ImageResponse(
     (
       <div style={{ display: "flex", width: "100%", height: "100%" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img width={64} height={64} src={src} alt="" />
+        <img width={96} height={96} src={src} alt="" />
       </div>
     ),
     size,
