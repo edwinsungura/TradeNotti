@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse, type NextRequest, type NextFetchEvent } from "next/server";
 
 // Authenticated app surfaces. Everything else (landing, /login, /signup,
-// /forgot-password, /sso-callback, static assets) stays public.
+// /forgot-password, static assets) stays public.
 const isProtected = createRouteMatcher([
   "/today(.*)",
   "/journal(.*)",
@@ -20,7 +20,6 @@ const isAuthRoute = createRouteMatcher([
   "/login(.*)",
   "/signup(.*)",
   "/forgot-password(.*)",
-  "/sso-callback(.*)",
 ]);
 
 // Hostname split is opt-in: only active when BOTH hosts are configured

@@ -91,29 +91,6 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
     }
   }
 
-  async function onGoogle() {
-    setError(null);
-    try {
-      if (isSignup) {
-        if (!signUpLoaded) return;
-        await signUp.authenticateWithRedirect({
-          strategy: "oauth_google",
-          redirectUrl: "/sso-callback",
-          redirectUrlComplete: "/today",
-        });
-      } else {
-        if (!signInLoaded) return;
-        await signIn.authenticateWithRedirect({
-          strategy: "oauth_google",
-          redirectUrl: "/sso-callback",
-          redirectUrlComplete: "/today",
-        });
-      }
-    } catch (err) {
-      setError(clerkError(err, "Couldn't continue with Google."));
-    }
-  }
-
   return (
     <div className="pp-stage" style={{ height: "auto", minHeight: "100vh", overflow: "visible" }}>
       <header className="pp-utilbar">
@@ -166,18 +143,6 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
               </form>
             ) : (
               <form className="pp-auth-form" onSubmit={onSubmit}>
-                <button type="button" className="pp-oauth-btn" onClick={onGoogle}>
-                  <svg width="16" height="16" viewBox="0 0 16 16">
-                    <path d="M15.5 8.2c0-.5 0-1-.1-1.4H8v2.7h4.2c-.2 1-.7 1.8-1.5 2.4v2h2.4c1.4-1.3 2.2-3.2 2.2-5.5z" fill="#4285F4" />
-                    <path d="M8 16c2 0 3.7-.7 4.9-1.8l-2.4-1.9c-.7.5-1.5.7-2.5.7-1.9 0-3.6-1.3-4.2-3H1.4v1.9C2.6 14.5 5.1 16 8 16z" fill="#34A853" />
-                    <path d="M3.8 9.6c-.1-.3-.2-.7-.2-1s.1-.7.2-1V5.6H1.4C1 6.4.8 7.2.8 8s.2 1.6.6 2.4l2.4-1.8z" fill="#FBBC04" />
-                    <path d="M8 3.5c1.1 0 2.1.4 2.8 1.1l2.1-2.1C11.7.9 10 0 8 0 5.1 0 2.6 1.5 1.4 3.6l2.4 1.9C4.4 4.5 6.1 3.5 8 3.5z" fill="#EA4335" />
-                  </svg>
-                  Continue with Google
-                </button>
-
-                <div className="pp-auth-divider">or with email</div>
-
                 {isSignup && (
                   <Field label="Username" hint="Must be unique">
                     <Input name="name" type="text" required placeholder="yourname" autoComplete="username" />
