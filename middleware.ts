@@ -83,10 +83,13 @@ const withClerk = clerkMiddleware(async (auth, req) => {
 });
 
 export default function middleware(req: NextRequest, ev: NextFetchEvent) {
-  // No Clerk configured (preview/dev): honor WAITLIST_MODE gating but never
-  // touch Clerk, which would otherwise throw on the missing key.
+  // No Clerk configured (preview/dev, or a misconfigured key): we cannot
+  // authenticate anyone, so FAIL CLOSED — never expose the app. Block every
+  // protected app route and auth page; only public surfaces (landing,
+  // /preview, /api, static) pass through. This prevents the dashboard from
+  // being served without a login if the Clerk key is ever missing/misnamed.
   if (!CLERK_ENABLED) {
-    if (WAITLIST_MODE && (isProtected(req) || isAuthRoute(req))) {
+    if (isProtected(req) || isAuthRoute(req)) {
       return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.next();
