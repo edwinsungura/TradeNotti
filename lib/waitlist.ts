@@ -169,32 +169,3 @@ export async function joinWaitlist(input: {
 
   return toResult(created, false);
 }
-
-/** Mask an email for public-facing status views (the ref code is shareable). */
-export function maskEmail(email: string): string {
-  const [user, domain] = email.split("@");
-  if (!user || !domain) return email;
-  const head = user.slice(0, 2);
-  const stars = "*".repeat(Math.max(1, user.length - head.length));
-  return `${head}${stars}@${domain}`;
-}
-
-/**
- * Look up an entry by its referral code for the "see my spot" status flow.
- * Returns the same shape as a join (with a *masked* email, since the ref code
- * travels in shareable links), or null when the code doesn't exist.
- */
-export async function statusByRefCode(code: string): Promise<JoinResult | null> {
-  const refCode = code.trim().toUpperCase();
-  if (!refCode) return null;
-  const entry = await prisma.waitlistEntry.findUnique({ where: { refCode } });
-  if (!entry) return null;
-  return {
-    email: maskEmail(entry.email),
-    refCode: entry.refCode,
-    position: await positionFor(entry),
-    referrals: entry.referrals,
-    total: await totalInLine(),
-    alreadyJoined: true,
-  };
-}
