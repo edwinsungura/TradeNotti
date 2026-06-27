@@ -13,12 +13,8 @@ type JoinResult = {
   alreadyJoined: boolean;
 };
 
-// Remember the member on this device so a return visit shows their spot without
-// re-typing their email.
-const SAVED_KEY = "tn_waitlist_ref";
-
-// Only surface the public "N traders in line" proof once the line is past this
-// many signups, so it never reads as embarrassingly small early on.
+// Only surface the public "N traders joined" proof once we're past this many
+// signups, so it never reads as embarrassingly small early on.
 const COUNT_VISIBLE_AT = Number(process.env.NEXT_PUBLIC_WAITLIST_SHOW_COUNT_AT ?? 50);
 
 type Props = {
@@ -59,42 +55,6 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
     };
   }, []);
 
-  // Returning visitor: if we saved their ref code on this device, restore their
-  // current spot straight away (skipping the form). Drop the saved code if the
-  // entry no longer exists.
-  useEffect(() => {
-    let on = true;
-    let saved: string | null = null;
-    try {
-      saved = localStorage.getItem(SAVED_KEY);
-    } catch {
-      /* storage blocked — nothing to restore */
-    }
-    if (!saved) return;
-    fetch(`/api/waitlist/position?ref=${encodeURIComponent(saved)}`)
-      .then((r) => {
-        if (r.status === 404) {
-          try {
-            localStorage.removeItem(SAVED_KEY);
-          } catch {
-            /* ignore */
-          }
-          return null;
-        }
-        return r.ok ? r.json() : null;
-      })
-      .then((d) => {
-        if (on && d && d.ok) {
-          setResult(d as JoinResult);
-          setStatus("joined");
-        }
-      })
-      .catch(() => {});
-    return () => {
-      on = false;
-    };
-  }, []);
-
   const join = useCallback(
     async (email: string) => {
       setStatus("loading");
@@ -114,12 +74,6 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
         setResult(data as JoinResult);
         setTotal(data.total ?? total);
         setStatus("joined");
-        // Remember them on this device so a return visit restores their spot.
-        try {
-          if (data.refCode) localStorage.setItem(SAVED_KEY, data.refCode);
-        } catch {
-          /* storage blocked — they can still use their status link */
-        }
         // Surface the success state at the top of the viewport.
         window.scrollTo({ top: 0, behavior: "smooth" });
       } catch {
@@ -152,7 +106,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
           </p>
 
           {joined ? (
-            <SuccessPanel result={result!} showStatus />
+            <SuccessPanel result={result!} />
           ) : (
             <>
               <div className="wl-perk">
@@ -223,7 +177,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
         </div>
       </section>
 
-      {/* ===== SOCIAL PROOF (only once the line crosses the threshold) ===== */}
+      {/* ===== SOCIAL PROOF (only once we cross the threshold) ===== */}
       {total >= COUNT_VISIBLE_AT && (
         <section className="wl-proof">
           <div className="wl-proof-avatars">
@@ -233,40 +187,10 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
             <span className="wl-proof-more">+</span>
           </div>
           <span className="wl-proof-count">
-            <b>{total.toLocaleString("en-US")}</b> traders are already in line
+            <b>{total.toLocaleString("en-US")}</b> traders have already joined
           </span>
         </section>
       )}
-
-      {/* ===== HOW THE LINE WORKS ===== */}
-      <section className="wl-line">
-        <span className="wl-eyebrow">Your place in line isn&apos;t fixed</span>
-        <h2>The earlier you are, the sooner you&apos;re in.</h2>
-        <p className="wl-line-sub">
-          We onboard in cohorts — not all at once. Claim a spot, then climb the line by referring
-          traders who get it.
-        </p>
-        <div className="wl-steps">
-          <Step
-            n="01"
-            icon="mail"
-            title="Claim your spot"
-            body="Drop your email. No card, no commitment — just your place in line."
-          />
-          <Step
-            n="02"
-            icon="hash"
-            title="Hold your place"
-            body="You're in line the moment you join — and the earlier you claim, the earlier your cohort."
-          />
-          <Step
-            n="03"
-            icon="link"
-            title="Refer to climb"
-            body="Every friend who joins moves you up the line — and into an earlier cohort."
-          />
-        </div>
-      </section>
 
       {/* ===== COUNTDOWN ===== */}
       <section className="wl-countdown">
@@ -434,10 +358,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
           <span className="wl-final-rule" />
         </span>
         <h2>Claim your waitlist spot.</h2>
-        <p>
-          Lock your 50% discount — it&apos;s for waitlist members only. Climb the line by
-          inviting traders who get it.
-        </p>
+        <p>Lock your 50% discount — it&apos;s for waitlist members only.</p>
         {joined ? (
           <SuccessPanel result={result!} compact />
         ) : (
@@ -507,19 +428,6 @@ function JoinForm({
       </div>
       {error && <p className="wl-error">{error}</p>}
     </form>
-  );
-}
-
-function Step({ n, icon, title, body }: { n: string; icon: string; title: string; body: string }) {
-  return (
-    <div className="wl-step">
-      <span className="wl-step-ic">
-        <Icon name={icon} size={18} />
-      </span>
-      <span className="wl-step-n">{n}</span>
-      <h3>{title}</h3>
-      <p>{body}</p>
-    </div>
   );
 }
 
