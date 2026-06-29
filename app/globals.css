@@ -3086,7 +3086,7 @@ body { background: var(--bg-1); color: var(--fg-1); }
 .wl-accountable { background: var(--bg-2); color: var(--fg-1); padding-block: 88px; text-align: center; }
 .wl-accountable h2 { font-size: clamp(30px, 4vw, 46px); font-weight: 800; margin: 14px 0 0; color: var(--fg-1); }
 .wl-accountable-sub { color: var(--fg-2); font-size: 17px; max-width: 36em; margin: 18px auto 0; }
-.wl-acc-grid { max-width: var(--wl-max); margin: 56px auto 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: left; }
+.wl-acc-grid { max-width: 768px; margin: 56px auto 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; text-align: left; }
 .wl-acc { position: relative; border: 1px solid var(--line-1); border-radius: 16px; background: var(--bg-1); padding: 26px; }
 .wl-acc-ic { display: inline-flex; width: 46px; height: 46px; align-items: center; justify-content: center; border-radius: 12px; background: var(--gold-wash); color: var(--gold-deep); }
 .wl-acc h3 { font-size: 20px; margin: 20px 0 8px; color: var(--fg-1); }

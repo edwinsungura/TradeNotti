@@ -339,6 +339,11 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
             body="Live, prop firm, paper — keep every account under one profile and split your stats or roll them up."
           />
           <AccItem
+            icon="flame"
+            title="Habit streak tracker"
+            body="Build discipline day by day — track routines like 'no revenge trading' and keep your streak alive."
+          />
+          <AccItem
             icon="users"
             title="Accountability partners"
             body="Share an account with a trading partner to keep each other honest — your stats out in the open."
