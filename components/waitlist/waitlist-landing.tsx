@@ -411,7 +411,7 @@ function JoinForm({
           required
           inputMode="email"
           autoComplete="email"
-          placeholder="you@email.com"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="wl-input"
