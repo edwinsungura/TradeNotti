@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Icon, BrandLogo } from "@/components/ui";
 import { SuccessPanel } from "./success-panel";
+import HeroBackdrop from "./hero-backdrop";
 
 type JoinResult = {
   email: string;
@@ -94,6 +95,7 @@ export default function WaitlistLanding({ initialTotal, launchDate, inviteRef, s
 
       {/* ===== HERO ===== */}
       <section className="wl-hero">
+        <HeroBackdrop />
         <div className="wl-hero-copy">
           <h1>
             Your voice trade journal workspace.
