@@ -24,6 +24,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  // Canonical host: consolidates apex/www so Google indexes one URL.
+  metadataBase: new URL("https://tradenotti.com"),
   title: "TradeNotti",
   description:
     "A clean trading journal for forex & crypto traders — capture, organize, and review every trade.",
