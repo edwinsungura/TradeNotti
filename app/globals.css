@@ -2942,7 +2942,14 @@ body { background: var(--bg-1); color: var(--fg-1); }
   --wl-max: 1120px;
   font-family: var(--font-body);
   color: var(--fg-1);
-  background: var(--bg-1);
+  /* Airy pastel wash blooming at the top of the page, fading to white — the
+     soft-gradient hero feel, translated to the indigo brand. */
+  background:
+    radial-gradient(900px 460px at 82% -80px, rgba(147, 122, 255, .16), transparent 62%),
+    radial-gradient(760px 420px at 6% -40px, rgba(83, 71, 240, .12), transparent 60%),
+    linear-gradient(180deg, rgba(83, 71, 240, .05), rgba(83, 71, 240, 0) 560px),
+    var(--bg-1);
+  background-repeat: no-repeat;
   min-height: 100vh;
 }
 .wl h1, .wl h2, .wl h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
@@ -2987,10 +2994,12 @@ body { background: var(--bg-1); color: var(--fg-1); }
 .wl-submit {
   display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
   height: 50px; padding: 0 22px; border: none; border-radius: 12px; cursor: pointer;
-  background: var(--gold); color: #fff; font: 600 15px/1 var(--font-body);
-  transition: background .15s, transform .05s;
+  background: linear-gradient(120deg, var(--gold-deep) 0%, var(--gold) 55%, #7A67FF 100%);
+  color: #fff; font: 600 15px/1 var(--font-body);
+  box-shadow: 0 12px 26px -14px rgba(83, 71, 240, .7);
+  transition: filter .15s, box-shadow .15s, transform .05s;
 }
-.wl-submit:hover { background: var(--gold-deep); }
+.wl-submit:hover { filter: brightness(1.06); box-shadow: 0 16px 30px -12px rgba(83, 71, 240, .8); }
 .wl-submit:active { transform: translateY(1px); }
 .wl-submit:disabled { opacity: .65; cursor: default; }
 .wl-error { color: var(--loss); font-size: 13px; margin-top: 10px; }
@@ -3045,7 +3054,7 @@ body { background: var(--bg-1); color: var(--fg-1); }
 .wl-step p { color: var(--fg-2); font-size: 15px; line-height: 1.55; margin: 0; }
 
 /* Countdown */
-.wl-countdown { background: var(--gold-wash); color: var(--fg-1); padding-block: 80px; text-align: center; }
+.wl-countdown { background: linear-gradient(180deg, var(--gold-wash) 0%, #E7E4FB 100%); color: var(--fg-1); padding-block: 80px; text-align: center; }
 .wl-countdown-label { text-transform: uppercase; letter-spacing: .18em; font-size: 12px; font-weight: 700; color: var(--gold-deep); }
 .wl-clock { display: flex; gap: 16px; justify-content: center; margin-top: 30px; }
 .wl-unit { background: var(--bg-1); border: 1px solid var(--line-1); border-radius: 16px; width: 120px; padding: 24px 0; }
@@ -3057,7 +3066,7 @@ body { background: var(--bg-1); color: var(--fg-1); }
 
 /* Peek cards */
 .wl-peek-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 48px; text-align: left; }
-.wl-peek-card { border: 1px solid var(--line-1); border-radius: 18px; padding: 28px; background: var(--bg-2); display: flex; flex-direction: column; }
+.wl-peek-card { border: 1px solid var(--line-1); border-radius: 18px; padding: 28px; background: linear-gradient(165deg, #ffffff 0%, var(--gold-wash) 100%); display: flex; flex-direction: column; }
 .wl-peek-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .wl-peek-ic { display: inline-flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 12px; background: var(--gold-wash); color: var(--gold-deep); }
 .wl-tag { text-transform: uppercase; letter-spacing: .1em; font-size: 10px; font-weight: 700; color: var(--gold-deep); background: var(--gold-wash); padding: 5px 10px; border-radius: 999px; }
@@ -3083,17 +3092,17 @@ body { background: var(--bg-1); color: var(--fg-1); }
 .wl-review-lbl { display: block; margin-top: 4px; font-size: 12px; color: var(--fg-3); }
 
 /* Accountability (dark) */
-.wl-accountable { background: var(--bg-2); color: var(--fg-1); padding-block: 88px; text-align: center; }
+.wl-accountable { background: linear-gradient(180deg, #EDF0FF 0%, #F5F3FE 100%); color: var(--fg-1); padding-block: 88px; text-align: center; }
 .wl-accountable h2 { font-size: clamp(30px, 4vw, 46px); font-weight: 800; margin: 14px 0 0; color: var(--fg-1); }
 .wl-accountable-sub { color: var(--fg-2); font-size: 17px; max-width: 36em; margin: 18px auto 0; }
 .wl-acc-grid { max-width: 768px; margin: 56px auto 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; text-align: left; }
-.wl-acc { position: relative; border: 1px solid var(--line-1); border-radius: 16px; background: var(--bg-1); padding: 26px; }
+.wl-acc { position: relative; border: 1px solid var(--gold-soft); border-radius: 16px; background: linear-gradient(165deg, #ffffff 0%, var(--gold-wash) 100%); padding: 26px; }
 .wl-acc-ic { display: inline-flex; width: 46px; height: 46px; align-items: center; justify-content: center; border-radius: 12px; background: var(--gold-wash); color: var(--gold-deep); }
 .wl-acc h3 { font-size: 20px; margin: 20px 0 8px; color: var(--fg-1); }
 .wl-acc p { color: var(--fg-2); font-size: 15px; line-height: 1.6; margin: 0; }
 
 /* Final CTA */
-.wl-final { max-width: 640px; margin: 0 auto; padding-block: 96px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+.wl-final { max-width: 760px; margin: 56px auto 72px; padding: 64px 44px 68px; text-align: center; display: flex; flex-direction: column; align-items: center; background: linear-gradient(160deg, rgba(83, 71, 240, .10) 0%, rgba(147, 122, 255, .05) 100%); border: 1px solid var(--gold-soft); border-radius: 28px; }
 .wl-final-eyebrow { display: inline-flex; align-items: center; gap: 12px; color: var(--gold-deep); font-weight: 600; font-size: 14px; }
 .wl-final-rule { width: 28px; height: 1px; background: var(--gold-soft); }
 .wl-final h2 { font-size: clamp(34px, 5vw, 52px); font-weight: 800; margin: 16px 0 0; }
@@ -3136,7 +3145,8 @@ body { background: var(--bg-1); color: var(--fg-1); }
   .wl-hero { grid-template-columns: 1fr; gap: 40px; padding-block: 24px 56px; }
   .wl-lead, .wl-form { max-width: none; }
   .wl-peek-grid, .wl-acc-grid { grid-template-columns: 1fr; }
-  .wl-peek, .wl-accountable, .wl-final { padding-block: 64px; }
+  .wl-peek, .wl-accountable { padding-block: 64px; }
+  .wl-final { padding: 52px 24px 56px; margin: 36px auto 56px; }
   .wl-clock { flex-wrap: wrap; }
   .wl-unit { width: 132px; }
   .wl-testimonial { margin-left: 0; max-width: 100%; }
