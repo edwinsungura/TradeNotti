@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "TradeNotti — Your voice trade journal workspace · Join the waitlist",
   description:
     "TradeNotti is your voice trade journal workspace: speak your trade review out loud and it transcribes it into a clean, written note — in seconds. Join the waitlist to lock 50% off the yearly plan.",
+  alternates: { canonical: "/" },
   openGraph: {
     title: "TradeNotti — Your voice trade journal workspace",
     description:
